@@ -1,15 +1,25 @@
+import { useDatabaseContext } from "./context/DataBaseProvider"
 import { useWeatherContext } from "./context/WeatherContextProvider"
 
 
 const App = () => {
-   const contextData = useWeatherContext() 
+   const contextData = useWeatherContext()
+   const db = useDatabaseContext()
    return (
-      <div className='font-bold text-teal-600 text-3xl flex justify-center items-center min-h-[100dvh] w-[max(20rem,_calc(100vw_-_4rem))] mx-auto'
-      >
-         Weather App
-         <br />
-         You are currently at the position: {JSON.stringify(contextData?.location)}
-      </div>
+      <>
+         <div className='font-thick text-lg font-bold text-teal-600 flex justify-center items-center min-h-[100dvh] w-[max(20rem,_calc(100vw_-_4rem))] mx-auto'>
+            Weather App
+            <br />
+            You are currently at the position:{' '}
+            {JSON.stringify(contextData?.location)}
+         </div>
+         <button className='' onClick={db?.loginFn}>
+            Login
+         </button>
+         <button className='' onClick={db?.logoutFn}>
+            Logout
+         </button>
+      </>
    )
 }
 

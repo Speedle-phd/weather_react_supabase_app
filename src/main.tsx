@@ -2,13 +2,13 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
-import AuthContextProvider from './context/AuthContextProvider'
 import WeatherContextProvider from './context/WeatherContextProvider'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import RootLayout from './layout/RootLayout'
 import AuthLayout from './layout/AuthLayout'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import DatabaseContextProvider from './context/DataBaseProvider'
 
 const router = createBrowserRouter([
    {
@@ -42,10 +42,10 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
    <React.StrictMode>
-      <AuthContextProvider>
+      <DatabaseContextProvider>
          <WeatherContextProvider>
             <RouterProvider router={router} />
          </WeatherContextProvider>
-      </AuthContextProvider>
+      </DatabaseContextProvider>
    </React.StrictMode>
 )
