@@ -8,7 +8,7 @@ import RootLayout from './layout/RootLayout'
 import AuthLayout from './layout/AuthLayout'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
-import DatabaseContextProvider from './context/DataBaseProvider'
+import DatabaseContextProvider from './context/DataBaseContextProvider'
 
 const router = createBrowserRouter([
    {

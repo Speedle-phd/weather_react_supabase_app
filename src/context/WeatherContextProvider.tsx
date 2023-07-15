@@ -55,6 +55,7 @@ const WeatherContextProvider = ({ children }: React.PropsWithChildren) => {
 
 export default WeatherContextProvider
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useWeatherContext = () => {
    return useContext(WeatherContext)
 }

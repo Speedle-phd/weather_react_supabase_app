@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
 interface DatabaseContextInterface {
-   test: string
+   user: unknown | null
    loginFn: () => Promise<void>
    logoutFn: () => Promise<void>
 }
@@ -50,14 +50,14 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
    },[user, session])
 
    return (
-      <DatabaseContext.Provider value={{ test: 'string', loginFn, logoutFn }}>
+      <DatabaseContext.Provider value={{ user, loginFn, logoutFn }}>
          {children}
       </DatabaseContext.Provider>
    )
 }
 
 export default DatabaseContextProvider
-
+// eslint-disable-next-line react-refresh/only-export-components
 export const useDatabaseContext = () => {
    return useContext(DatabaseContext)
 }
