@@ -33,7 +33,7 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
       try {
          const { data, error } = await supabase.auth.signInWithPassword({
             email: 'shanks-@gmx.de',
-            password: 'Gf#124816',
+            password: import.meta.env.VITE_TEST_PW as string,
          })
          if (!error) {
             setUser(data.session.user)
