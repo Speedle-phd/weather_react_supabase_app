@@ -16,11 +16,11 @@ const WeatherContextProvider = ({ children }: React.PropsWithChildren) => {
 
    // GEOLOCATION API
    const success = useCallback((pos : GeolocationPosition) => {
-      const {latitude, longitude, accuracy} = pos.coords
-      console.log('Your current position is:')
-      console.log(`Latitude : ${latitude}`)
-      console.log(`Longitude: ${longitude}`)
-      console.log(`More or less ${accuracy} meters.`)
+      const {latitude, longitude} = pos.coords
+      // console.log('Your current position is:')
+      // console.log(`Latitude : ${latitude}`)
+      // console.log(`Longitude: ${longitude}`)
+      // console.log(`More or less ${accuracy} meters.`)
       setCurrentLocationFn({latitude, longitude})
    },[])
    const error = useCallback((err: GeolocationPositionError) => {
@@ -38,9 +38,9 @@ const WeatherContextProvider = ({ children }: React.PropsWithChildren) => {
          options)
    }, [success, error])
 
-   useEffect(() => {
-      console.log(location)
-   }, [location])
+   // useEffect(() => {
+   //    console.log(location)
+   // }, [location])
 
    function setCurrentLocationFn(l: LocationInterface) {
       setLocation(l)

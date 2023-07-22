@@ -7,13 +7,15 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import RootLayout from './layout/RootLayout'
 import AuthLayout from './layout/AuthLayout'
 import Login from './pages/Login'
-import Signup from './pages/Signup'
 import DatabaseContextProvider from './context/DataBaseContextProvider'
+import Confirmation from './pages/Confirmation'
+import { isLoggedIn, isNotLoggedIn } from './api/loader'
 
 const router = createBrowserRouter([
    {
       path: '/',
       element: <RootLayout />,
+      loader: isLoggedIn,
       children: [
          {
             index: true,
@@ -23,16 +25,23 @@ const router = createBrowserRouter([
    },
    {
       element: <AuthLayout />,
+      loader: isNotLoggedIn,
       children: [
          {
             path: '/signup',
-            element: <Signup />,
+            element: <Login />,
+            // loader: isNotLoggedIn,
          },
          {
             path: '/login',
             element: <Login />,
+            // loader: isNotLoggedIn,
          },
       ],
+   },
+   {
+      path: '/confirmation',
+      element: <Confirmation />,
    },
    {
       path: '*',
