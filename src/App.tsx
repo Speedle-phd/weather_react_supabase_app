@@ -1,13 +1,13 @@
 import { useLoaderData } from 'react-router-dom'
-import { useDatabaseContext } from './context/DataBaseContextProvider'
-import { useWeatherContext } from './context/WeatherContextProvider'
+// import { useDatabaseContext } from './context/DataBaseContextProvider'
+// import { useWeatherContext } from './context/WeatherContextProvider'
 import Underline from './components/Underline'
 import Clock from './components/Clock'
-import { useEffect } from 'react'
+
 
 
 const App = () => {
-   const contextData = useWeatherContext()
+   // const contextData = useWeatherContext()
    // const db = useDatabaseContext()
    const loaderData = useLoaderData()
    // const { current: { dt }, timezone_offset} = loaderData

@@ -121,8 +121,8 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
    }
 
    supabase.auth.onAuthStateChange((e, s) => {
-      // console.log(e)
-      // console.log(s)
+      console.log(e)
+      console.log(s)
    })
 
    useEffect(() => {
