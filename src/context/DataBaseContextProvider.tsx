@@ -24,11 +24,12 @@ const DatabaseContext = createContext<DatabaseContextInterface | null>(null)
 
 const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
    const pandaCookie = cookie.get('panda-weather-cookie') as CookieType
+   
    const [user, setUser] = useState<User | null>(pandaCookie?.user ?? null)
-   const [session, setSession] = useState<Session | null>(pandaCookie ?? null)
-   const [supabaseError, setSupabaseError] = useState<AuthError | null>(
-      null
+   const [session, setSession] = useState<Session | null>(
+      pandaCookie ?? null
    )
+   const [supabaseError, setSupabaseError] = useState<AuthError | null>(null)
 
    const provideCookie = () => {
       return cookie.get('panda-weather-cookie') as CookieType
@@ -85,9 +86,7 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
             },
          })
          if (!error) {
-            console.log(data.session, data.user)
             const cookieValue = { ...data.session, user: data.user }
-            console.log(cookieValue)
             cookie.set('panda-weather-cookie', cookieValue, {
                path: '/',
                maxAge: 60 * 60 * 10,
@@ -102,11 +101,17 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
       }
    }
 
-   const getCurrentSession = async () => {
+   async function getCurrentSession() {
       try {
-         const  { data, error } = await supabase.auth.getSession()
+         const { data, error } = await supabase.auth.getSession()
          if (data) {
-            console.log(data)
+            const cookieValue = { ...data.session, user: data.session!.user }
+            setSession(data.session)
+            setUser(data.session!.user)
+            cookie.set('panda-weather-cookie', cookieValue, {
+               path: '/',
+               maxAge: 60 * 60 * 10,
+            })
             return data.session
          }
          setSupabaseError(error)
@@ -115,11 +120,17 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
       }
    }
 
+   supabase.auth.onAuthStateChange((e, s) => {
+      // console.log(e)
+      // console.log(s)
+   })
+
    useEffect(() => {
       setTimeout(() => {
          setSupabaseError(null)
       }, 4000)
    }, [supabaseError])
+
 
    return (
       <DatabaseContext.Provider

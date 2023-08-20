@@ -8,8 +8,8 @@ import RootLayout from './layout/RootLayout'
 import AuthLayout from './layout/AuthLayout'
 import Login from './pages/Login'
 import DatabaseContextProvider from './context/DataBaseContextProvider'
-import Confirmation from './pages/Confirmation'
-import { isLoggedIn, isNotLoggedIn } from './api/loader'
+import { appLoader, isLoggedIn, isNotLoggedIn } from './api/loader'
+
 
 const router = createBrowserRouter([
    {
@@ -20,6 +20,7 @@ const router = createBrowserRouter([
          {
             index: true,
             element: <App />,
+            loader: appLoader,
          },
       ],
    },
@@ -38,10 +39,6 @@ const router = createBrowserRouter([
             // loader: isNotLoggedIn,
          },
       ],
-   },
-   {
-      path: '/confirmation',
-      element: <Confirmation />,
    },
    {
       path: '*',

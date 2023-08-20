@@ -3,6 +3,7 @@ import LoginFormControl from './LoginFormControl'
 import { useDatabaseContext } from '../context/DataBaseContextProvider'
 import { useRef } from 'react'
 
+
 const LoginForm = () => {
    const db = useDatabaseContext()
    const formRef = useRef<HTMLFormElement>(null)
@@ -27,46 +28,49 @@ const LoginForm = () => {
    }
 
    return (
-      <Form
-         ref={formRef}
-         onSubmit={handleSubmit}
-         className='valid:shadow-whiteShadow focus-within:shadow-none my-8 text-center w-[clamp(20rem,50vw,50rem)] flex flex-col gap-8 bg-[rgba(33,33,33,.75)] p-10 rounded-md transition-all'
-         method='POST'
+      <>
+         <Form
+            ref={formRef}
+            onSubmit={handleSubmit}
+            className='valid:shadow-whiteShadow focus-within:shadow-none my-8 text-center w-[clamp(20rem,50vw,50rem)] flex flex-col gap-8 bg-[rgba(33,33,33,.75)] p-10 rounded-md transition-all'
+            method='POST'
          >
-         {path === "signup" ? <LoginFormControl type={'username'} /> : null}
-         <LoginFormControl type={'email'} />
-         <LoginFormControl type={'password'} />
-         <button className='btn-blue'>
-            {path === 'login' ? 'Login' : 'Signup'}
-         </button>
-         {path === 'login' ? (
-            <>
-               <div className='flex flex-col gap-3'>
-                  Do not have an account?
-                  <br />
-                  <Link
-                     className='uppercase hover:text-slate-600 text-cyan-800 transition-colors'
-                     to='/signup'
-                  >
-                     Create one lightning fast
-                  </Link>
-               </div>
-            </>
-         ) : (
-            <>
-               <div className='flex flex-col gap-3'>
-                  Already have an account?
-                  <br />
-                  <Link
-                     className='uppercase hover:text-slate-600 text-cyan-800 transition-colors'
-                     to='/login'
-                  >
-                     Log in lightning fast
-                  </Link>
-               </div>
-            </>
-         )}
-      </Form>
+            {path === 'signup' ? <LoginFormControl type={'username'} /> : null}
+            <LoginFormControl type={'email'} />
+            <LoginFormControl type={'password'} />
+            <button className='btn-blue px-10 self-center'>
+               {path === 'login' ? 'Login' : 'Signup'}
+            </button>
+
+            {path === 'login' ? (
+               <>
+                  <div className='flex flex-col gap-3'>
+                     Do not have an account?
+                     <br />
+                     <Link
+                        className='uppercase hover:text-slate-600 text-cyan-800 transition-colors'
+                        to='/signup'
+                     >
+                        Create one lightning fast
+                     </Link>
+                  </div>
+               </>
+            ) : (
+               <>
+                  <div className='flex flex-col gap-3'>
+                     Already have an account?
+                     <br />
+                     <Link
+                        className='uppercase hover:text-slate-600 text-cyan-800 transition-colors'
+                        to='/login'
+                     >
+                        Log in lightning fast
+                     </Link>
+                  </div>
+               </>
+            )}
+         </Form>
+      </>
    )
 }
 
