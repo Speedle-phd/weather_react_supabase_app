@@ -42,11 +42,11 @@ export const appLoader = async() => {
       const res = await axios<WeatherResponseType>(URL, { params: { units: "metric", lat: LAT, lon: LONG, appid: OPEN_WEATHER_API_KEY, exclude: "minutely,hourly,daily,alerts"}})
       const res2 = await axios(GEO_URL)
       console.log(res2)
-
-      const {data} = res
-      console.log(data)
-      return defer({deferredData: data})
-      
+      if (res.status === 200) {
+         const {data} = res
+         console.log(data)
+         return defer({deferredData: data})
+      }
    } catch (error) {
       if (axios.isAxiosError(error)) {
          console.log("axiosError")
