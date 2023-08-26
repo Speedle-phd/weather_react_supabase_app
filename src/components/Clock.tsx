@@ -13,15 +13,17 @@ const Clock = ({ tzOffset, dt }: ClockProps) => {
    const minuteArmRef = useRef<HTMLDivElement | null>(null)
    const secondArmRef = useRef<HTMLDivElement | null>(null)
    const clockRef = useRef<HTMLDivElement | null>(null)
+
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
    const dtRef = useRef(dt)
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
    const offsetRef = useRef(tzOffset)
    const [time, setTime] = useState(
       // new Date(tzOffset + dt * 1000).toLocaleTimeString()
       new Date().toLocaleTimeString()
    )
 
-   
-   const clockValue : ClockValueInterface = useMemo(() => {
+   const clockValue: ClockValueInterface = useMemo(() => {
       return {
          0: [0, 0],
          1: [1.5, 0.5],
@@ -41,7 +43,7 @@ const Clock = ({ tzOffset, dt }: ClockProps) => {
    const clock = useCallback(() => {
       setTime(new Date().toLocaleTimeString())
       const [hours, minutes, secs] = time.split(':')
-      
+
       const [rotateH, rotateM, rotateS] = convertRotation(
          +hours,
          +minutes,
@@ -56,7 +58,7 @@ const Clock = ({ tzOffset, dt }: ClockProps) => {
       if (h > 12) {
          h -= 12
       }
-      
+
       const rotateH =
          ((360 / 12) * h + ((m / 60) * 360) / 12 + 90).toString() + 'deg'
       const rotateM = ((360 / 60) * m + 90).toString() + 'deg'
