@@ -39,9 +39,10 @@ type WeatherResponseType = {
 
 export const appLoader = async() => {
    try {
+      console.log(OPEN_WEATHER_API_KEY)
       const res = await axios<WeatherResponseType>(URL, { params: { units: "metric", lat: LAT, lon: LONG, appid: OPEN_WEATHER_API_KEY, exclude: "minutely,hourly,daily,alerts"}})
-      const res2 = await axios(GEO_URL)
-      console.log(res2)
+      // const res2 = await axios(GEO_URL)
+      // console.log(res2)
       if (res.status === 200) {
          const {data} = res
          console.log(data)
