@@ -1,7 +1,7 @@
-import { Form, Link, useLocation, useNavigate } from 'react-router-dom'
+import { Form, Link, useLocation, useNavigate, useNavigation } from 'react-router-dom'
 import LoginFormControl from './LoginFormControl'
 import { useDatabaseContext } from '../context/DataBaseContextProvider'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 
 const LoginForm = () => {
@@ -10,6 +10,7 @@ const LoginForm = () => {
    const location = useLocation()
    const path = location.pathname.replace('/', '')
    const navigate = useNavigate()
+   const navigation = useNavigation()
 
 
    const handleSubmit = (e: React.FormEvent) => {
@@ -27,19 +28,29 @@ const LoginForm = () => {
       }
    }
 
+   useEffect(() => {
+      console.log(navigation.state)
+   }, [navigation.state])
+
    return (
       <>
          <Form
             ref={formRef}
             onSubmit={handleSubmit}
-            className='valid:shadow-whiteShadow focus-within:shadow-none my-8 text-center w-[clamp(20rem,50vw,50rem)] flex flex-col gap-8 bg-[rgba(33,33,33,.75)] p-10 rounded-md transition-all'
+            className='valid:shadow-whiteShadow focus-within:shadow-none my-8 text-center w-[clamp(20rem,50vw,50rem)] flex flex-col gap-8 bg-[rgba(33,33,33,.45)] p-10 rounded-md transition-all'
             method='POST'
          >
             {path === 'signup' ? <LoginFormControl type={'username'} /> : null}
             <LoginFormControl type={'email'} />
             <LoginFormControl type={'password'} />
             <button className='btn-blue px-10 self-center'>
-               {path === 'login' ? 'Login' : 'Signup'}
+               {navigation.state === 'idle'
+                  ? path === 'login'
+                     ? 'Login'
+                     : 'Signup'
+                  : path === 'login'
+                  ? 'Loggin\' in'
+                  : 'Signin\' up'}
             </button>
 
             {path === 'login' ? (

@@ -67,6 +67,90 @@
 
       --ring: 217.2 32.6% 17.5%;
    }
+
+   .clock{
+   --clock-clr: #444;
+   background-color:white;
+   height: 10rem;
+   width: 10rem;
+   /* border: 3.01px solid var(--clock-clr); */
+   border-radius: 50%;
+   position: relative;
+   border-radius: 100vmin;
+}
+
+.clock::after{
+   content: '';
+   position: absolute;
+   border-radius: 50%;
+   background-color: var(--clock-clr);
+   height: 14px;
+   width: 14px;
+   left: 50%;
+   top: 50%;
+   translate: -50% -50%;
+}
+.clock::before{
+   content: "";
+   position: absolute;
+   inset: -0.5rem;
+   background: linear-gradient(45deg, #232323, goldenrod 40%, #676767);
+   background-size: 200%;
+   border-radius: 50%;
+   z-index: -1;
+   animation: shiftBg 4000ms infinite alternate;
+}
+@keyframes shiftBg {
+   from {
+      background-position: bottom left;
+   } to {
+      background-position: top right;
+   }
+}
+
+
+[class*="arm"]{
+   border-radius: 100vmin;
+   position: absolute;
+   height: 3px;
+   background-color: var(--clock-clr);
+   top: 50%;
+   transform-origin: bottom right;
+}
+.armh{
+   --clock-arm: 33%;
+   width: var(--clock-arm);
+   left: calc(50% - var(--clock-arm));
+   rotate: 0deg;
+}
+.armm{
+   --clock-arm: 40%;
+   width: var(--clock-arm);
+   left: calc(50% - var(--clock-arm));
+   rotate: 90deg;
+}
+.secs{
+   border-radius: 100vmin;
+   position: absolute;
+   top: 50%;
+   transform-origin: bottom right;
+   --clock-arm: 50%;
+   width: var(--clock-arm);
+   left: calc(50% - var(--clock-arm));
+   height: 1px;
+   background: #000;
+}
+.gradients{
+   border-radius: 100vmin;
+   position: absolute;
+   top: 1rem;
+   transform-origin: bottom right;
+   --clock-arm: 10%;
+   width: var(--clock-arm);
+   left: calc(50% - var(--clock-arm));
+   height: 1px;
+   background: #000;
+}
 }
 
 /* @layer base {

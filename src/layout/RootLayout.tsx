@@ -3,38 +3,73 @@ import { useDatabaseContext } from '../context/DataBaseContextProvider'
 import darkClouds from '../assets/dark-clouds.jpg'
 import ControlButton from '../components/ControlButton'
 import { useEffect, useRef } from 'react'
+import useResize from '../hooks/useResize'
+import {AiOutlineLogout} from 'react-icons/ai'
+import { FiSettings } from 'react-icons/fi'
+import { BsFillCloudLightningRainFill, BsPinMapFill } from 'react-icons/bs'
 
 const RootLayout = () => {
    const db = useDatabaseContext()
    const logoutRef = useRef<HTMLButtonElement | null>(null)
+   const [windowSize, setSize] = useResize()
+
+   // useEffect(() => {
+   //    db?.getCurrentSession().catch((err) => console.log(err))
+   // // eslint-disable-next-line react-hooks/exhaustive-deps
+   // }, [])
 
    useEffect(() => {
-      db?.getCurrentSession().catch((err) => console.log(err))
-   // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [])
+      window.addEventListener("resize", setSize)
+      return () => window.removeEventListener("resize", setSize)
+   },[setSize, windowSize])
 
-
+// TODO: tooltips for buttons
    return (
       <>
          {db?.user ? (
             <div className='' style={{ backgroundImage: `url(${darkClouds})` }}>
-               <aside className='fixed top-1 right-1 text-slate-300/80 '>
-                  <nav>
-                     <ControlButton>Weatherdetails</ControlButton>
-                     <ControlButton>Administer Location</ControlButton>
-                     <ControlButton>Accountsettings</ControlButton>
+               <aside className='flex justify-end p-3 text-slate-300/80 '>
+                  <nav className='flex gap-1'>
+                     <ControlButton>
+                        {' '}
+                        {windowSize < 768 ? (
+                           <BsFillCloudLightningRainFill aria-label='Weatherdetails' />
+                        ) : (
+                           'Weatherdetails'
+                        )}
+                     </ControlButton>
+                     <ControlButton>
+                        {' '}
+                        {windowSize < 768 ? (
+                           <BsPinMapFill aria-label='Administer Locations' />
+                        ) : (
+                           'Administer Locations'
+                        )}
+                     </ControlButton>
+                     <ControlButton>
+                        {' '}
+                        {windowSize < 768 ? (
+                           <FiSettings aria-label='Accountsettings' />
+                        ) : (
+                           'Accountsettings'
+                        )}
+                     </ControlButton>
                      <ControlButton
                         ref={logoutRef}
                         onClick={() => {
                            void db?.logoutFn()
                         }}
                      >
-                        Logout
+                        {windowSize < 768 ? (
+                           <AiOutlineLogout aria-label='Logout' />
+                        ) : (
+                           'Logout'
+                        )}
                      </ControlButton>
                   </nav>
                </aside>
                <Outlet />
-               <aside className='fixed bottom-2 right-2 text-slate-300/80'>
+               <aside className='text-right p-3 text-slate-300/50'>
                   &copy; Weather_the_weather {new Date().getFullYear()}
                </aside>
             </div>

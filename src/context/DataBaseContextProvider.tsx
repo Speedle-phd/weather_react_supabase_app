@@ -24,25 +24,18 @@ const DatabaseContext = createContext<DatabaseContextInterface | null>(null)
 
 const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
    const pandaCookie = cookie.get('panda-weather-cookie') as CookieType
-   
    const [user, setUser] = useState<User | null>(pandaCookie?.user ?? null)
-   const [session, setSession] = useState<Session | null>(
-      pandaCookie ?? null
-   )
+   const [session, setSession] = useState<Session | null>(pandaCookie ?? null)
    const [supabaseError, setSupabaseError] = useState<AuthError | null>(null)
-
+   const [mount, setMount] = useState(true)
+   
    const provideCookie = () => {
       return cookie.get('panda-weather-cookie') as CookieType
    }
 
    const logoutFn = async () => {
       try {
-         const { error } = await supabase.auth.signOut()
-         if (!error) {
-            setUser(null)
-            setSession(null)
-            cookie.remove('panda-weather-cookie', { path: '/' })
-         }
+         await supabase.auth.signOut()
       } catch (error) {
          console.log(error)
       }
@@ -50,18 +43,11 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
 
    const loginFn = async (email: string, password: string) => {
       try {
-         const { data, error } = await supabase.auth.signInWithPassword({
+         const { error } = await supabase.auth.signInWithPassword({
             email: email,
             password: password,
          })
-         if (!error) {
-            cookie.set('panda-weather-cookie', data.session, {
-               path: '/',
-               maxAge: 60 * 60 * 10,
-            })
-            setUser(data?.session?.user)
-            setSession(data?.session)
-         } else {
+         if (error) {
             setSupabaseError(error)
          }
       } catch (error) {
@@ -100,7 +86,7 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
          console.log(error)
       }
    }
-
+   // TODO: check for expired cookies if logic works properly
    async function getCurrentSession() {
       try {
          const { data, error } = await supabase.auth.getSession()
@@ -122,7 +108,41 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
 
    supabase.auth.onAuthStateChange((e, s) => {
       console.log(e)
-      console.log(s)
+      switch (e) {
+         case 'INITIAL_SESSION':
+            if (s && mount) {
+               setSession(s)
+               setUser(s.user)
+               setMount(false)
+            }
+            break
+         case 'SIGNED_IN':
+            if (s) {
+               setSession(s)
+               setUser(s.user)
+               cookie.set('panda-weather-cookie', s, {
+                  path: '/',
+                  maxAge: 60 * 60 * 10,
+               })
+            }
+            break
+         case 'SIGNED_OUT':
+            setUser(null)
+            setSession(null)
+            cookie.remove('panda-weather-cookie', { path: '/' })
+            break
+
+         case 'TOKEN_REFRESHED':
+            if (cookie.get('panda-weather-cookie') as CookieType) {
+               cookie.remove('panda-weather-cookie', { path: '/' })
+            }
+            cookie.set('panda-weather-cookie', s, {
+               path: '/',
+               maxAge: 60 * 60 * 10,
+            })
+            break
+      }
+      //REFRESH_TOKEN, SIGNED_IN, SIGNED_OUT, USER_UPDATED, PASSWORD_RECOVERY
    })
 
    useEffect(() => {
@@ -130,7 +150,6 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
          setSupabaseError(null)
       }, 4000)
    }, [supabaseError])
-
 
    return (
       <DatabaseContext.Provider

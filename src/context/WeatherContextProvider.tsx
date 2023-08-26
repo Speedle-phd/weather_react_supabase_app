@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { supabase } from './DataBaseContextProvider'
 
 interface WeatherContextInterface {
    setCurrentLocationFn: (l: LocationInterface) => void
@@ -15,9 +16,11 @@ const WeatherContextProvider = ({ children }: React.PropsWithChildren) => {
    const [location, setLocation] = useState<LocationInterface | null>(null)
 
    // GEOLOCATION API
-   const success = useCallback((pos : GeolocationPosition) => {
+   const success = useCallback(async (pos : GeolocationPosition) => {
       const {latitude, longitude} = pos.coords
       // console.log(`More or less ${accuracy} meters.`)
+      const s = await supabase.auth.getSession()
+      console.log(s)
       setCurrentLocationFn({latitude, longitude})
    },[])
    const error = useCallback((err: GeolocationPositionError) => {

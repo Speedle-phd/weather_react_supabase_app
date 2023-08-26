@@ -9,6 +9,7 @@ import AuthLayout from './layout/AuthLayout'
 import Login from './pages/Login'
 import DatabaseContextProvider from './context/DataBaseContextProvider'
 import { appLoader, isLoggedIn, isNotLoggedIn } from './api/loader'
+import ErrorHandler from './components/ErrorHandler'
 
 
 const router = createBrowserRouter([
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
             index: true,
             element: <App />,
             loader: appLoader,
+            errorElement: <ErrorHandler/>
          },
       ],
    },

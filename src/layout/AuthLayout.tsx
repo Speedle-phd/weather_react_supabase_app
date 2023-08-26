@@ -11,7 +11,7 @@ const AuthLayout = () => {
    return (
       <>
          
-            <div className='min-h-[100dvh]'>
+            <div className='min-h-[100dvh] bg-cyan-900/10'>
                <LoginCard>
                   <LoginCard.Above>
                      <div className='backdrop-saturate-50 m-auto mt-10 bg-[rgba(255,255,255,0.07)] text-2xl w-80 min-h-[min-content] text-center p-12 rounded-sm backdrop-blur-[3px]'>
