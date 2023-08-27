@@ -7,7 +7,7 @@ const cookie = new Cookies()
 
 const URL = 'https://api.openweathermap.org/data/3.0/onecall'
 const OPEN_WEATHER_API_KEY = import.meta.env.VITE_API_KEY_OPEN_WEATHER as string
-const GEO_URL = `http://api.openweathermap.org/geo/1.0/reverse`
+const GEO_URL = `https://api.openweathermap.org/geo/1.0/reverse`
 // const GEO_URL = `http://api.openweathermap.org/geo/1.0/direct?q=bamberg&limit=5&appid=${OPEN_WEATHER_API_KEY}`
 
 export const isLoggedIn = async () => {
