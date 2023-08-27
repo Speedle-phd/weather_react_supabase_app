@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import Cookies from 'universal-cookie'
 
+const cookie = new Cookies()
 
 interface WeatherContextInterface {
    setCurrentLocationFn: (l: LocationInterface) => void
@@ -19,10 +21,13 @@ const WeatherContextProvider = ({ children }: React.PropsWithChildren) => {
    const success = useCallback((pos : GeolocationPosition) => {
       const {latitude, longitude} = pos.coords
       // console.log(`More or less ${accuracy} meters.`)
-
+      cookie.set('lat', latitude, {path: "/"})
+      cookie.set('long', longitude, {path: "/"})
       setCurrentLocationFn({latitude, longitude})
    },[])
    const error = useCallback((err: GeolocationPositionError) => {
+      cookie.remove('lat', { path: '/' })
+      cookie.remove('long', { path: '/' })
       console.warn(`ERROR(${err.code}): ${err.message}`)
    },[])
    useEffect(() => {

@@ -4,7 +4,7 @@ import Cookies from 'universal-cookie'
 
 const cookie = new Cookies()
 
-type CookieType = Session & { user: User }
+export type CookieType = Session & { user: User }
 
 interface DatabaseContextInterface {
    user: User | null

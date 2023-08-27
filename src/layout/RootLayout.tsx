@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useLoaderData } from 'react-router-dom'
 import { useDatabaseContext } from '../context/DataBaseContextProvider'
 import darkClouds from '../assets/dark-clouds.jpg'
 import ControlButton from '../components/ControlButton'
@@ -13,11 +13,6 @@ const RootLayout = () => {
    const logoutRef = useRef<HTMLButtonElement | null>(null)
    const [windowSize, setSize] = useResize()
 
-   // useEffect(() => {
-   //    db?.getCurrentSession().catch((err) => console.log(err))
-   // // eslint-disable-next-line react-hooks/exhaustive-deps
-   // }, [])
-
    useEffect(() => {
       window.addEventListener("resize", setSize)
       return () => window.removeEventListener("resize", setSize)
@@ -27,7 +22,7 @@ const RootLayout = () => {
    return (
       <>
          {db?.user ? (
-            <div className='' style={{ backgroundImage: `url(${darkClouds})` }}>
+            <div className='' style={{ backgroundImage: `url(${darkClouds})`, backgroundSize: "cover" }}>
                <aside className='flex justify-end p-3 text-slate-300/80 '>
                   <nav className='flex gap-1'>
                      <ControlButton>
@@ -43,7 +38,7 @@ const RootLayout = () => {
                         {windowSize < 768 ? (
                            <BsPinMapFill aria-label='Administer Locations' />
                         ) : (
-                           'Administer Locations'
+                           'Locations'
                         )}
                      </ControlButton>
                      <ControlButton>
@@ -51,7 +46,7 @@ const RootLayout = () => {
                         {windowSize < 768 ? (
                            <FiSettings aria-label='Accountsettings' />
                         ) : (
-                           'Accountsettings'
+                           'Settings'
                         )}
                      </ControlButton>
                      <ControlButton
@@ -66,6 +61,8 @@ const RootLayout = () => {
                            'Logout'
                         )}
                      </ControlButton>
+                     {/* //TODO: Make a component */}
+                     <aside className="text-md md:text-xl md:p-5 text-slate-900 font-bold p-3 bg-slate-50/70 backdrop-blur-lg rounded-xl absolute left-2">{`Welcome ${db.user.user_metadata.username as string}`}</aside>
                   </nav>
                </aside>
                <Outlet />
