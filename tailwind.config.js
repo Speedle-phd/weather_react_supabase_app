@@ -11,6 +11,11 @@ module.exports = {
    ],
    // content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
    theme: {
+      backgroundSize: {
+         '3000': "3000px",
+         'cover': 'cover',
+         'contain': 'contain',
+      },
       fontFamily: {
          sans: ['Ubuntu', 'sans-serif'],
          serif: ['Vollkorn', 'serif'],

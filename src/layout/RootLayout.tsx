@@ -37,11 +37,9 @@ const RootLayout = () => {
       <>
          {db?.user ? (
             <div
-               className='cloud-animation'
+               className='cloud-animation bg-3000 bg-repeat md:bg-cover md:bg-no-repeat'
                style={{
                   backgroundImage: `url(${backgroundImage!})`,
-                  backgroundSize: 'cover',
-                  backgroundRepeat: "no-repeat",
                   backgroundPosition: 'center',
                }}
             >
