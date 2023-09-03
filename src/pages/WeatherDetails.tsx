@@ -56,28 +56,47 @@ const WeatherDetails = () => {
       const parent = element.parentElement!
       const x = e.clientX
       const posX = parent.scrollLeft
-
-      
       element.onmousemove = (e: MouseEvent) => {
          const newX = e.clientX
          const dx = newX - x
          parent.scrollLeft = posX - dx
-
          window.onmouseup = () => {
-
             element.onmousemove = null
+         }
+      }
+   }
+   const handlePointer = (e: PointerEvent) => {
+      const element = hourTempRef.current!
+      const parent = element.parentElement!
+      const x = e.clientX
+      const posX = parent.scrollLeft
+      element.setPointerCapture(e.pointerId)
+      element.onpointermove = (e: PointerEvent) => {
+         const newX = e.clientX
+         const dx = newX - x
+         parent.scrollLeft = posX - dx
+         window.onpointerup = () => {
+            element.onpointermove = null
+            element.releasePointerCapture(e.pointerId)
          }
       }
    }
 
    useEffect(() => {
-      const hourlyContainer = hourTempRef.current
-      hourlyContainer!.addEventListener('mousedown', handleMouseDown)
+      const hourlyContainer = hourTempRef.current!
+      hourlyContainer.addEventListener('mousedown', handleMouseDown)
+      hourlyContainer.addEventListener('pointerdown', handlePointer)
       return () =>
-         hourlyContainer!.removeEventListener('mousedown', handleMouseDown)
+         hourlyContainer.removeEventListener('mousedown', handleMouseDown)
+      hourlyContainer.removeEventListener('pointerdown', handlePointer)
    }, [hourTempRef])
 
    const renderContent = ({ deferredData }: DetailsDataInterface) => {
+      console.log(
+         new Date(
+            deferredData.hourly[0].dt * 1000 + deferredData.timezone_offset
+         )
+      )
       const hourlyTempArray: { date: string; temp: number; icon: string }[] = []
       for (const hour of deferredData.hourly) {
          const date = new Date(
@@ -87,6 +106,7 @@ const WeatherDetails = () => {
          const icon = hour.weather[0].icon
          hourlyTempArray.push({ date, temp, icon })
       }
+      const splicedHourlyTempArray = hourlyTempArray.splice(0, 24)
       // const hourlyTempConfigs = {
       //    type: 'line', // The chart type
       //    width: '100%', // Width of the chart
@@ -124,29 +144,34 @@ const WeatherDetails = () => {
                {/* <ReactFC {...hourlyTempConfigs} /> */}
                <section
                   style={{ userSelect: 'none' }}
-                  className='isolate overflow-x-hidden'
+                  className='isolate overflow-x-hidden flex'
                >
                   <div
                      ref={hourTempRef}
                      className='flex cursor-grab justify-center items-center py-2 
                      '
                   >
-                     {hourlyTempArray.map(({ date, icon, temp }, index) => {
-                        return (
-                           <div key={index} className='flex flex-col w-50 px-2'>
-                              
-                              <h3 className='text-lg'>{date}</h3>
-                              <img
-                                 draggable={false}
-                                 src={`https://openweathermap.org/img/wn/${icon}.png`}
-                                 alt=''
-                              />
-                              <p className='text-sm'>{`${temp.toFixed(
-                                 1
-                              )} °C`}</p>
-                           </div>
-                        )
-                     })}
+                     {splicedHourlyTempArray.map(
+                        ({ date, icon, temp }, index) => {
+                           console.log(date)
+                           return (
+                              <div
+                                 key={index}
+                                 className='flex flex-col w-50 px-2'
+                              >
+                                 <h3 className='text-lg'>{date}</h3>
+                                 <img
+                                    draggable={false}
+                                    src={`https://openweathermap.org/img/wn/${icon}.png`}
+                                    alt=''
+                                 />
+                                 <p className='text-sm'>{`${temp.toFixed(
+                                    1
+                                 )} °C`}</p>
+                              </div>
+                           )
+                        }
+                     )}
                   </div>
                </section>
             </article>
