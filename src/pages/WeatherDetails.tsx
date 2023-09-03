@@ -203,7 +203,7 @@ const WeatherDetails = () => {
                Weather the details
             </h1>
             <Underline />
-            <article className='my-10 bg-[rgba(255,255,255,0.6)] text-zinc-900 rounded-md min-h-[10rem] p-8 backdrop-blur-xl relative'>
+            <article className='my-10 bg-[rgba(255,255,255,0.6)] text-zinc-900 rounded-md min-h-[10rem] px-8 md:py-8 py-14 backdrop-blur-xl relative'>
                {/* @ts-ignore */}
                {/* <ReactFC {...hourlyTempConfigs} /> */}
                <h2 className='text-center mb-4 text-slate-900'>

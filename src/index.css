@@ -157,7 +157,7 @@
       }
    }
    .cloud-animation{
-      animation: cloudsMove 240000ms linear alternate infinite;
+      animation: cloudsMove 300000ms linear alternate infinite;
    }
    @keyframes cloudsMove {
       0%, 100% {
