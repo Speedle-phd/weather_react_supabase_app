@@ -51,43 +51,43 @@ const WeatherDetails = () => {
    const loaderData = useLoaderData()
    const hourTempRef = useRef<HTMLDivElement>(null)
 
-   const handleMouseDown = (e: MouseEvent) => {
-      const element = hourTempRef.current!
-      const parent = element.parentElement!
-      const x = e.clientX
-      const posX = parent.scrollLeft
-      element.onmousemove = (e: MouseEvent) => {
-         const newX = e.clientX
-         const dx = newX - x
-         parent.scrollLeft = posX - dx
-         window.onmouseup = () => {
-            element.onmousemove = null
-         }
-      }
-   }
+   // const handleMouseDown = (e: MouseEvent) => {
+   //    const element = hourTempRef.current!
+   //    const parent = element.parentElement!
+   //    const x = e.clientX
+   //    const posX = parent.scrollLeft
+   //    element.onmousemove = (e: MouseEvent) => {
+   //       const newX = e.clientX
+   //       const dx = newX - x
+   //       parent.scrollLeft = posX - dx
+   //       window.onmouseup = () => {
+   //          element.onmousemove = null
+   //       }
+   //    }
+   // }
    const handlePointer = (e: PointerEvent) => {
       const element = hourTempRef.current!
       const parent = element.parentElement!
       const x = e.clientX
       const posX = parent.scrollLeft
       element.setPointerCapture(e.pointerId)
-      element.onpointermove = (e: PointerEvent) => {
-         const newX = e.clientX
+      element.onpointermove = (ev: PointerEvent) => {
+         const newX = ev.clientX
          const dx = newX - x
          parent.scrollLeft = posX - dx
-         window.onpointerup = () => {
+         window.onpointerup = (eve: PointerEvent) => {
             element.onpointermove = null
-            element.releasePointerCapture(e.pointerId)
+            element.releasePointerCapture(eve.pointerId)
          }
       }
    }
 
    useEffect(() => {
       const hourlyContainer = hourTempRef.current!
-      hourlyContainer.addEventListener('mousedown', handleMouseDown)
+      // hourlyContainer.addEventListener('mousedown', handleMouseDown)
       hourlyContainer.addEventListener('pointerdown', handlePointer)
       return () => {
-         hourlyContainer.removeEventListener('mousedown', handleMouseDown)
+         // hourlyContainer.removeEventListener('mousedown', handleMouseDown)
          hourlyContainer.removeEventListener('pointerdown', handlePointer)
       }
    }, [hourTempRef])
