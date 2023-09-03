@@ -5,9 +5,17 @@ interface WeatherIconValueProps extends React.ComponentPropsWithoutRef<'div'>{
 }
 
 const WeatherIconValuePair = ({icon, iconValue, ...props}: WeatherIconValueProps) => {
-   return <div className="text-3xl gap-2 flex items-center justify-center" {...props}>
-      <div className="flex justify-start gap-4 min-w-[10rem]">{icon}<span className="text-2xl">{iconValue}</span></div>
-   </div>
+   return (
+      <div
+         className='text-3xl gap-2 flex items-center justify-center'
+         {...props}
+      >
+         <div className='flex justify-between items-center px-2 gap-4 min-w-[10rem] leading-none'>
+            {icon}
+            <span className='text-xl leading-none flex-1 px-2'>{iconValue}</span>
+         </div>
+      </div>
+   )
 }
 
 export default WeatherIconValuePair

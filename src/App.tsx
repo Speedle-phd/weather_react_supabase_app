@@ -14,8 +14,8 @@ import Loading from './components/Loading'
 export interface WeatherDataInterface {
    dt: number
    humidity: number
-   sunrise: Date
-   sunset: Date
+   sunrise: number
+   sunset: number
    clouds: number
    rain?: number
    snow?: number
@@ -31,6 +31,11 @@ export interface WeatherDataInterface {
 export interface HourlyWeatherDataInterface extends WeatherDataInterface {
    feels_like: number,
    temp: number
+   pop: number 
+}
+export interface CurrentWeatherDataInterface extends WeatherDataInterface {
+   feels_like: number,
+   temp: number
 }
 
 interface AppDataInterface {
@@ -41,7 +46,7 @@ interface AppDataInterface {
       state: string
       country: string
       timezone_offset: number
-      current: HourlyWeatherDataInterface 
+      current: CurrentWeatherDataInterface 
    }
 }
 

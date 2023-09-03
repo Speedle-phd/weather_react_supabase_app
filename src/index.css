@@ -150,7 +150,24 @@
    left: calc(50% - var(--clock-arm));
    height: 1px;
    background: #000;
-}
+   }
+   @media screen and (width > 700px) {
+      .cloud-animation{
+         animation: cloudsMove 80000ms linear alternate infinite;
+      }
+   }
+   .cloud-animation{
+      animation: cloudsMove 240000ms linear alternate infinite;
+   }
+   @keyframes cloudsMove {
+      0%, 100% {
+         background-position: center;
+      } 33% {
+         background-position: left center;
+      } 66% {
+         background-position: right center;
+      }
+   }
 }
 
 /* @layer base {

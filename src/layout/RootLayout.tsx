@@ -18,12 +18,14 @@ const RootLayout = () => {
    const [backgroundImage, setBackgroundImage] = useState<string>()
 
    useEffect(() => {
-      if (+time < 12) {
+      if (+time < 13) {
          setBackgroundImage(darkClouds)
       } else {
          setBackgroundImage(redCrimson)
       }
    }, [time])
+
+   
 
    useEffect(() => {
       window.addEventListener('resize', setSize)
@@ -35,11 +37,12 @@ const RootLayout = () => {
       <>
          {db?.user ? (
             <div
-               className=''
+               className='cloud-animation'
                style={{
                   backgroundImage: `url(${backgroundImage!})`,
                   backgroundSize: 'cover',
-                  backgroundPosition: 'center'
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: 'center',
                }}
             >
                <aside className='flex justify-end p-3 text-slate-300/80 '>

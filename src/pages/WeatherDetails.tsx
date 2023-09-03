@@ -11,6 +11,8 @@ import Line from 'fusioncharts/fusioncharts.charts'
 // Step 5 - Include the theme as fusion
 import FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion'
 import Underline from '../components/Underline'
+import WeatherIconValuePair from '../components/WeatherIconValuePair'
+import DayWeather from '../components/DayWeather'
 // Step 6 - Adding the chart and theme as dependency to the core fusioncharts
 ReactFC.fcRoot(FusionCharts, Line, FusionTheme)
 
@@ -32,6 +34,8 @@ interface DailyWeatherDataInterface extends WeatherDataInterface {
       morn: number
    }
    summary: string
+   pop: number
+   wind_speed: number
 }
 
 interface DetailsDataInterface {
@@ -74,8 +78,8 @@ const WeatherDetails = () => {
       element.onpointermove = (ev: PointerEvent) => {
          const newX = ev.clientX
          const dx = newX - x
-         console.log(dx)
-         parent.scrollLeft = posX - dx
+         const scrollAmplifier = 1.6
+         parent.scrollLeft = posX - dx * scrollAmplifier
          window.onpointerup = (eve: PointerEvent) => {
             element.onpointermove = null
             element.releasePointerCapture(eve.pointerId)
@@ -94,21 +98,78 @@ const WeatherDetails = () => {
    }, [hourTempRef])
 
    const renderContent = ({ deferredData }: DetailsDataInterface) => {
-      console.log(
-         new Date(
-            deferredData.hourly[0].dt * 1000 + deferredData.timezone_offset
-         )
-      )
-      const hourlyTempArray: { date: string; temp: number; icon: string }[] = []
+      console.log(deferredData)
+      const hourlyTempArray: {
+         date: string
+         temp: number
+         icon: string
+         rain: string
+         pop: string
+      }[] = []
       for (const hour of deferredData.hourly) {
          const date = new Date(
             hour.dt * 1000 + deferredData.timezone_offset
          ).toLocaleTimeString('DE-de', { hour: '2-digit', minute: '2-digit' })
          const temp = hour.temp
          const icon = hour.weather[0].icon
-         hourlyTempArray.push({ date, temp, icon })
+         let rain: string
+         const pop = `${hour.pop * 100} %`
+         if (hour.rain) {
+            rain = `${hour.rain} mm`
+         } else {
+            rain = `0 mm`
+         }
+         hourlyTempArray.push({ date, temp, icon, rain, pop })
       }
       const splicedHourlyTempArray = hourlyTempArray.splice(0, 24)
+
+      
+
+      const dailyWeatherArray: {
+         date: string
+         sunrise: string
+         sunset: string
+         tempMax: string
+         tempMin: string
+         icon: string
+         description: string
+         rain: string
+         pop: string
+         summary: string
+         humidity: string
+         windSpeed: string
+      }[] = []
+      for (const day of deferredData.daily) {
+         const date = new Date(
+            day.dt * 1000 + deferredData.timezone_offset
+         ).toLocaleDateString('en-UK', {
+            day: '2-digit',
+            month: '2-digit',
+            weekday: 'short',
+         })
+         const sunrise = new Date(
+            day.sunrise * 1000 + deferredData.timezone_offset
+         ).toLocaleTimeString()
+         const sunset = new Date(
+            day.sunset * 1000 + deferredData.timezone_offset
+         ).toLocaleTimeString()
+         const pop = `${day.pop} %`
+         const tempMax = `${day.temp.max} °C`
+         const tempMin = `${day.temp.min} °C`
+         const icon = day.weather[0].icon
+         const description = day.weather[0].description
+         let rain: string
+         if (day.rain) {
+            rain = `${day.rain} mm`
+         } else {
+            rain = '0 mm'
+         }
+         const summary = day.summary
+         const humidity = `${day.humidity} %`
+         const windSpeed = `${day.wind_speed} m/s`
+         dailyWeatherArray.push({date, sunrise, sunset, pop, tempMax, tempMin, icon, description, summary, humidity, windSpeed, rain})
+      }
+      const splicedDailyWeatherArray = dailyWeatherArray.splice(1, dailyWeatherArray.length)
       // const hourlyTempConfigs = {
       //    type: 'line', // The chart type
       //    width: '100%', // Width of the chart
@@ -134,6 +195,7 @@ const WeatherDetails = () => {
       //       data: hourlyTempArray.slice(0, 24),
       //    },
       // }
+      const todayData = deferredData.daily[0]
 
       return (
          <section className='p-10 w-[clamp(25rem,70vw,80rem)] rounded-lg bg-slate-50/10 backdrop-blur-sm relative after:absolute after:inset-[0.5rem] after:border-slate-700/50 after:border-2 after:rounded-lg flex flex-col after:z-[-10]'>
@@ -141,10 +203,19 @@ const WeatherDetails = () => {
                Weather the details
             </h1>
             <Underline />
-            <article className='my-10 bg-[rgba(255,255,255,0.6)] text-zinc-900 rounded-md min-h-[10rem] p-8 backdrop-blur-xl'>
+            <article className='my-10 bg-[rgba(255,255,255,0.6)] text-zinc-900 rounded-md min-h-[10rem] p-8 backdrop-blur-xl relative'>
                {/* @ts-ignore */}
                {/* <ReactFC {...hourlyTempConfigs} /> */}
-               <section
+               <h2 className='text-center mb-4 text-slate-900'>
+                  Weather the next 24 hours
+               </h2>
+               <aside className='absolute top-2 right-10'>
+                  {deferredData.name}
+                  <div className=' absolute right-0 font-medium text-xs text-slate-600/50'>
+                     {deferredData.state}, {deferredData.country}
+                  </div>
+               </aside>
+               <div
                   style={{ userSelect: 'none', touchAction: 'none' }}
                   className='isolate overflow-x-hidden flex'
                >
@@ -155,8 +226,7 @@ const WeatherDetails = () => {
                      '
                   >
                      {splicedHourlyTempArray.map(
-                        ({ date, icon, temp }, index) => {
-                           console.log(date)
+                        ({ date, icon, temp, rain, pop }, index) => {
                            return (
                               <div
                                  key={index}
@@ -166,17 +236,54 @@ const WeatherDetails = () => {
                                  <img
                                     draggable={false}
                                     src={`https://openweathermap.org/img/wn/${icon}.png`}
-                                    alt=''
+                                    alt='weather icon'
                                  />
-                                 <p className='text-sm'>{`${temp.toFixed(
+                                 <p className='text-sm text-yellow-700/70'>{`${temp.toFixed(
                                     1
                                  )} °C`}</p>
+                                 <img
+                                    className='w-10 mt-3'
+                                    draggable={false}
+                                    src='https://openweathermap.org/img/wn/09n.png'
+                                    alt='weather icon'
+                                 />
+                                 <p className='text-[0.7rem] text-center text-cyan-800'>
+                                    {rain}
+                                 </p>
+                                 <p className='text-[0.7rem] text-center text-cyan-800/50'>
+                                    {pop}
+                                 </p>
                               </div>
                            )
                         }
                      )}
                   </div>
-               </section>
+               </div>
+               <div className='border p-4 rounded-sm mt-4'>
+                  <div className='text-center text-sm text-slate-500'>
+                     In a nutshell: <br />
+                     <span className='text-lg text-zinc-800 font-serif italic'>
+                        {todayData.summary}
+                     </span>
+                  </div>
+               </div>
+               <div className=' my-5 grid grid-cols-1 md:grid-cols-2'>
+                  <WeatherIconValuePair
+                     icon={<span className='text-sm'>MIN</span>}
+                     iconValue={`${todayData.temp.min}°C`}
+                  />
+                  <WeatherIconValuePair
+                     icon={<span className='text-sm'>MAX</span>}
+                     iconValue={`${todayData.temp.max}°C`}
+                  />
+               </div>
+               <Underline />
+               <h2 className='my-6 text-center'>Weather the next week</h2>
+               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3'>
+                  {splicedDailyWeatherArray.map((el, index) => {
+                     return <DayWeather key={index} {...el} />
+                  })}
+               </div>
             </article>
          </section>
       )
