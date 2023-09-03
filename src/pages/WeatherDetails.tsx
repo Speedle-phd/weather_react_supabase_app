@@ -74,6 +74,7 @@ const WeatherDetails = () => {
       element.onpointermove = (ev: PointerEvent) => {
          const newX = ev.clientX
          const dx = newX - x
+         console.log(dx)
          parent.scrollLeft = posX - dx
          window.onpointerup = (eve: PointerEvent) => {
             element.onpointermove = null
@@ -144,10 +145,11 @@ const WeatherDetails = () => {
                {/* @ts-ignore */}
                {/* <ReactFC {...hourlyTempConfigs} /> */}
                <section
-                  style={{ userSelect: 'none' }}
+                  style={{ userSelect: 'none', touchAction: 'none' }}
                   className='isolate overflow-x-hidden flex'
                >
                   <div
+                     style={{ touchAction: 'none' }}
                      ref={hourTempRef}
                      className='flex cursor-grab justify-center items-center py-2 
                      '
