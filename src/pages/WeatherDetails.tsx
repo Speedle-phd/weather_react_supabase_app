@@ -86,9 +86,10 @@ const WeatherDetails = () => {
       const hourlyContainer = hourTempRef.current!
       hourlyContainer.addEventListener('mousedown', handleMouseDown)
       hourlyContainer.addEventListener('pointerdown', handlePointer)
-      return () =>
+      return () => {
          hourlyContainer.removeEventListener('mousedown', handleMouseDown)
-      hourlyContainer.removeEventListener('pointerdown', handlePointer)
+         hourlyContainer.removeEventListener('pointerdown', handlePointer)
+      }
    }, [hourTempRef])
 
    const renderContent = ({ deferredData }: DetailsDataInterface) => {
