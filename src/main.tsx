@@ -8,8 +8,11 @@ import RootLayout from './layout/RootLayout'
 import AuthLayout from './layout/AuthLayout'
 import Login from './pages/Login'
 import DatabaseContextProvider from './context/DataBaseContextProvider'
-import { appLoader, isLoggedIn, isNotLoggedIn } from './api/loader'
+import { appLoader, detailLoader, isLoggedIn, isNotLoggedIn } from './api/loader'
 import ErrorHandler from './components/ErrorHandler'
+import WeatherDetails from './pages/WeatherDetails'
+import Locations from './pages/Locations'
+import Settings from './pages/Settings'
 
 
 const router = createBrowserRouter([
@@ -23,6 +26,24 @@ const router = createBrowserRouter([
             element: <App />,
             loader: appLoader,
             errorElement: <ErrorHandler/>
+         },
+         {
+            path: 'details',
+            element: <WeatherDetails />,
+            loader: detailLoader,
+            errorElement: <ErrorHandler />,
+         },
+         {
+            path: 'locations',
+            element: <Locations />,
+            // loader: detailLoader,
+            errorElement: <ErrorHandler />,
+         },
+         {
+            path: 'settings',
+            element: <Settings />,
+            // loader: detailLoader,
+            errorElement: <ErrorHandler />,
          },
       ],
    },

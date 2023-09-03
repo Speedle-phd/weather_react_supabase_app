@@ -9,8 +9,31 @@ import WeatherIconValuePair from './components/WeatherIconValuePair'
 import { FiSunrise, FiSunset } from 'react-icons/fi'
 import { LiaGrinBeamSweatSolid, LiaTemperatureHighSolid } from 'react-icons/lia'
 import { BsFillCloudHazeFill } from 'react-icons/bs'
+import Loading from './components/Loading'
 
-interface DataInterface {
+export interface WeatherDataInterface {
+   dt: number
+   humidity: number
+   sunrise: Date
+   sunset: Date
+   clouds: number
+   rain?: number
+   snow?: number
+   weather: [
+      {
+         description: string
+         icon: string
+         main: string
+      }
+   ]
+}
+
+export interface HourlyWeatherDataInterface extends WeatherDataInterface {
+   feels_like: number,
+   temp: number
+}
+
+interface AppDataInterface {
    deferredData: {
       username: string
       avatar: string
@@ -18,22 +41,7 @@ interface DataInterface {
       state: string
       country: string
       timezone_offset: number
-      current: {
-         dt: number
-         feels_like: number
-         humidity: number
-         sunrise: Date
-         sunset: Date
-         temp: number
-         clouds: number
-         weather: [
-            {
-               description: string
-               icon: string
-               main: string
-            }
-         ]
-      }
+      current: HourlyWeatherDataInterface 
    }
 }
 
@@ -41,9 +49,8 @@ const App = () => {
    // const contextData = useWeatherContext()
    // const db = useDatabaseContext()
    const loaderData = useLoaderData()
-   console.log(loaderData)
 
-   const renderContent = ({ deferredData }: DataInterface) => {
+   const renderContent = ({ deferredData }: AppDataInterface) => {
       const {
          name,
          country,
@@ -57,14 +64,14 @@ const App = () => {
             sunset,
             temp,
             clouds,
+            
             weather: [{ description, icon, main }],
          },
       } = deferredData
 
       return (
          <>
-            <main className='my-5 gap-4 font-thick text-lg font-bold flex flex-col items-center  w-[max(20rem,_calc(100vw_-_4rem))] mx-auto'>
-               <section className='p-20 min-h-[80dvh] w-[clamp(25rem,70vw,80rem)] rounded-lg bg-slate-50/10 backdrop-blur-sm relative after:absolute after:inset-[0.5rem] after:border-slate-700/50 after:border-2 after:rounded-lg flex flex-col after:z-[-1]'>
+               <section className='p-20 w-[clamp(25rem,70vw,80rem)] rounded-lg bg-slate-50/10 backdrop-blur-sm relative after:absolute after:inset-[0.5rem] after:border-slate-700/50 after:border-2 after:rounded-lg flex flex-col after:z-[-1]'>
                   <h1 className='text-center text-3xl text-slate-800'>
                      Weather App
                   </h1>
@@ -122,17 +129,16 @@ const App = () => {
                            icon={<BsFillCloudHazeFill />}
                            iconValue={clouds.toString() + ' %'}
                         />
+                        {"rain" in deferredData.current ? "it's raining" : null}
                      </div>
                   </article>
                </section>
-            </main>
          </>
       )
    }
    if (!loaderData) {
       return (
-         <>
-            <main className='my-5 gap-4 font-thick text-lg font-bold flex flex-col items-center  w-[max(20rem,_calc(100vw_-_4rem))] mx-auto'>
+         
                <section className='p-20 min-h-[80dvh] w-[clamp(25rem,70vw,80rem)] rounded-lg bg-slate-50/10 backdrop-blur-sm relative after:absolute after:inset-[0.5rem] after:border-slate-700/50 after:border-2 after:rounded-lg flex flex-col after:z-[-1]'>
                   <h1 className='text-center text-3xl text-slate-800'>
                      Weather App
@@ -148,7 +154,7 @@ const App = () => {
                      </div>
                      <Link
                         className='text-md font-thin flex justify-center text-cyan-800 underline hover:text-cyan-600 focus-visible:text-cyan-600 transition-colors'
-                        to='/'
+                        to='/locations'
                      >
                         <span className='text-center'>
                            Go to <b>Administer-Location-Page</b> to add a
@@ -157,13 +163,12 @@ const App = () => {
                      </Link>
                   </article>
                </section>
-            </main>
-         </>
+         
       )
    }
 
    return (
-      <Suspense fallback={'Loading...'}>
+      <Suspense fallback={<Loading />}>
          <Await resolve={loaderData}>{renderContent}</Await>
       </Suspense>
    )

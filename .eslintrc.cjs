@@ -16,7 +16,6 @@ module.exports = {
       sourceType: 'module',
       project: true,
       tsconfigRootDir: __dirname,
-      
    },
    plugins: ['react-refresh'],
    rules: {
@@ -25,5 +24,6 @@ module.exports = {
          { allowConstantExport: true },
       ],
       '@typescript-eslint/no-non-null-assertion': 'off',
+      "@typescript-eslint/ban-ts-comment": "off"
    },
 }

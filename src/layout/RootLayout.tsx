@@ -1,54 +1,101 @@
-import { Navigate, Outlet, useLoaderData } from 'react-router-dom'
+import { Link, NavLink, Navigate, Outlet } from 'react-router-dom'
 import { useDatabaseContext } from '../context/DataBaseContextProvider'
 import darkClouds from '../assets/dark-clouds.jpg'
+import redCrimson from '../assets/red-crimson.jpg'
 import ControlButton from '../components/ControlButton'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import useResize from '../hooks/useResize'
-import {AiOutlineLogout} from 'react-icons/ai'
+import { AiOutlineHome, AiOutlineLogout } from 'react-icons/ai'
 import { FiSettings } from 'react-icons/fi'
 import { BsFillCloudLightningRainFill, BsPinMapFill } from 'react-icons/bs'
+import useTime from '../hooks/useTime'
 
 const RootLayout = () => {
    const db = useDatabaseContext()
    const logoutRef = useRef<HTMLButtonElement | null>(null)
    const [windowSize, setSize] = useResize()
+   const [time] = useTime(new Date())
+   const [backgroundImage, setBackgroundImage] = useState<string>()
 
    useEffect(() => {
-      window.addEventListener("resize", setSize)
-      return () => window.removeEventListener("resize", setSize)
-   },[setSize, windowSize])
+      if (+time < 12) {
+         setBackgroundImage(darkClouds)
+      } else {
+         setBackgroundImage(redCrimson)
+      }
+   }, [time])
 
-// TODO: tooltips for buttons
+   useEffect(() => {
+      window.addEventListener('resize', setSize)
+      return () => window.removeEventListener('resize', setSize)
+   }, [setSize, windowSize])
+
+   // TODO: tooltips for buttons
    return (
       <>
          {db?.user ? (
-            <div className='' style={{ backgroundImage: `url(${darkClouds})`, backgroundSize: "cover" }}>
+            <div
+               className=''
+               style={{
+                  backgroundImage: `url(${backgroundImage!})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+               }}
+            >
                <aside className='flex justify-end p-3 text-slate-300/80 '>
                   <nav className='flex gap-1'>
-                     <ControlButton>
-                        {' '}
-                        {windowSize < 768 ? (
-                           <BsFillCloudLightningRainFill aria-label='Weatherdetails' />
-                        ) : (
-                           'Weatherdetails'
-                        )}
-                     </ControlButton>
-                     <ControlButton>
-                        {' '}
-                        {windowSize < 768 ? (
-                           <BsPinMapFill aria-label='Administer Locations' />
-                        ) : (
-                           'Locations'
-                        )}
-                     </ControlButton>
-                     <ControlButton>
-                        {' '}
-                        {windowSize < 768 ? (
-                           <FiSettings aria-label='Accountsettings' />
-                        ) : (
-                           'Settings'
-                        )}
-                     </ControlButton>
+                     <NavLink
+                        className={({ isActive }) => (isActive ? 'hidden' : '')}
+                        to='/'
+                     >
+                        <ControlButton>
+                           {' '}
+                           {windowSize < 768 ? (
+                              <AiOutlineHome aria-label='Home' />
+                           ) : (
+                              'Home'
+                           )}
+                        </ControlButton>
+                     </NavLink>
+                     <NavLink
+                        className={({ isActive }) => (isActive ? 'hidden' : '')}
+                        to='/details'
+                     >
+                        <ControlButton>
+                           {' '}
+                           {windowSize < 768 ? (
+                              <BsFillCloudLightningRainFill aria-label='Weatherdetails' />
+                           ) : (
+                              'Weatherdetails'
+                           )}
+                        </ControlButton>
+                     </NavLink>
+                     <NavLink
+                        className={({ isActive }) => (isActive ? 'hidden' : '')}
+                        to='/locations'
+                     >
+                        <ControlButton>
+                           {' '}
+                           {windowSize < 768 ? (
+                              <BsPinMapFill aria-label='Administer Locations' />
+                           ) : (
+                              'Locations'
+                           )}
+                        </ControlButton>
+                     </NavLink>
+                     <NavLink
+                        className={({ isActive }) => (isActive ? 'hidden' : '')}
+                        to='/settings'
+                     >
+                        <ControlButton>
+                           {' '}
+                           {windowSize < 768 ? (
+                              <FiSettings aria-label='Accountsettings' />
+                           ) : (
+                              'Settings'
+                           )}
+                        </ControlButton>
+                     </NavLink>
                      <ControlButton
                         ref={logoutRef}
                         onClick={() => {
@@ -62,10 +109,14 @@ const RootLayout = () => {
                         )}
                      </ControlButton>
                      {/* //TODO: Make a component */}
-                     <aside className="text-md md:text-xl md:p-5 text-slate-900 font-bold p-3 bg-slate-50/70 backdrop-blur-lg rounded-xl absolute left-2">{`Welcome ${db.user.user_metadata.username as string}`}</aside>
+                     <aside className='text-md md:text-xl md:p-5 text-slate-900 font-bold p-3 bg-slate-50/70 backdrop-blur-lg rounded-xl absolute left-2'>{`Welcome ${
+                        db.user.user_metadata.username as string
+                     }`}</aside>
                   </nav>
                </aside>
-               <Outlet />
+               <main className='my-5 gap-4 min-h-[100dvh] font-thick text-lg font-bold flex flex-col items-center  w-[max(20rem,_calc(100vw_-_4rem))] mx-auto'>
+                  <Outlet />
+               </main>
                <aside className='text-right p-3 text-slate-300/50'>
                   &copy; Weather_the_weather {new Date().getFullYear()}
                </aside>

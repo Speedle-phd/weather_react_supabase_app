@@ -130,13 +130,17 @@ export const appLoader = async () => {
             appid: OPEN_WEATHER_API_KEY,
          },
       })
-      console.log(res2)
+
       if (res.status === 200 && res2.status === 200) {
          const { data: weatherData } = res
          const { data: geoData } = res2
-         const geoObj = {state: geoData[0].state, country: geoData[0].country, name: geoData[0].name}
+         const geoObj = {
+            state: geoData[0].state,
+            country: geoData[0].country,
+            name: geoData[0].name,
+         }
          const returnData = { ...weatherData, ...geoObj, username, avatar }
-         console.log(returnData)
+
          return defer({ deferredData: returnData })
       }
    } catch (error) {
@@ -150,4 +154,70 @@ export const appLoader = async () => {
          throw error
       }
    }
+}
+
+export const detailLoader = async () => {
+   try {
+      const gpsLat = cookie.get('lat') as number
+      const gpsLong = cookie.get('long') as number
+      const { data: getAllData, error: getError } = await supabase
+         .from('weather_data')
+         .select()
+      console.log(getAllData, getError)
+
+      const isSetData = (getAllData as WeatherDataReponseType[])?.find(
+         (el) => el.isset
+      )
+
+      if (!isSetData) {
+         return null
+      }
+
+      const lat = isSetData ? isSetData.lat : gpsLat
+      const long = isSetData ? isSetData.long : gpsLong
+
+      const res = await axios<AxiosResponse>(URL, {
+         params: {
+            units: 'metric',
+            lat,
+            lon: long,
+            appid: OPEN_WEATHER_API_KEY,
+            exclude: 'minutely',
+         },
+      })
+      const res2 = await axios<GeoDataType[]>(GEO_URL, {
+         params: {
+            lat,
+            lon: long,
+            appid: OPEN_WEATHER_API_KEY,
+         },
+      })
+
+      if (res.status === 200 && res2.status === 200) {
+         const { data: weatherData } = res
+         const { data: geoData } = res2
+         const geoObj = {
+            state: geoData[0].state,
+            country: geoData[0].country,
+            name: geoData[0].name,
+         }
+         const returnData = {
+            ...weatherData,
+            ...geoObj,
+         }
+
+         return defer({ deferredData: returnData })
+      }
+   } catch (error) {
+      if (axios.isAxiosError(error)) {
+         console.log('axiosError')
+         throw {
+            msg: error.response?.statusText,
+            status: error.response?.status,
+         }
+      } else {
+         throw error
+      }
+   }
+   return true
 }
