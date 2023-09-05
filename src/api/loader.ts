@@ -52,10 +52,11 @@ export const appLoader = async () => {
    try {
       const gpsLat = cookie.get('lat') as number
       const gpsLong = cookie.get('long') as number
-      const user = cookie.get('panda-weather-cookie') as CookieType
+      const { data } = await supabase.auth.getSession()
+      const user = data.session!.user
       console.log(user)
-      const username = user.user.user_metadata.username as string
-      const avatar = user.user.user_metadata.avatar as string
+      const username = user.user_metadata.username as string
+      const avatar = user.user_metadata.avatar as string
       //GPS
       const { data: gpsData, error: gpsError } = await supabase
          .from('weather_data')
@@ -63,12 +64,12 @@ export const appLoader = async () => {
             {
                lat: gpsLat,
                long: gpsLong,
-               user_id: user.user.id,
+               user_id: user.id,
                isgps: true,
                updated_at: new Date(),
             },
          ])
-         .match({ isgps: true, user_id: user.user.id })
+         .match({ isgps: true, user_id: user.id })
          .select()
       console.log(gpsData, gpsError)
       if (gpsData!.length === 0) {
@@ -78,7 +79,7 @@ export const appLoader = async () => {
                {
                   lat: gpsLat,
                   long: gpsLong,
-                  user_id: user.user.id,
+                  user_id: user.id,
                   isgps: true,
                },
             ])
@@ -89,11 +90,13 @@ export const appLoader = async () => {
       const { data: getAllData, error: getError } = await supabase
          .from('weather_data')
          .select()
+         .eq("isset", true)
       console.log(getAllData, getError)
 
       const isSetData = (getAllData as WeatherDataReponseType[])?.find(
          (el) => el.isset
       )
+      const isGps = isSetData ? isSetData?.isgps : true
       const lat = isSetData ? isSetData.lat : gpsLat
       const long = isSetData ? isSetData.long : gpsLong
       if (gpsData?.length === 0) {
@@ -109,7 +112,7 @@ export const appLoader = async () => {
                      isset: true,
                   },
                ])
-               .match({ isgps: true, user_id: user.user.id })
+               .match({ isgps: true, user_id: user.id })
                .select()
          console.log(isSetUpdateData, isSetUpdateError)
       }
@@ -139,7 +142,7 @@ export const appLoader = async () => {
             country: geoData[0].country,
             name: geoData[0].name,
          }
-         const returnData = { ...weatherData, ...geoObj, username, avatar }
+         const returnData = { ...weatherData, ...geoObj, username, avatar, isGps }
 
          return defer({ deferredData: returnData })
       }
@@ -160,21 +163,28 @@ export const detailLoader = async () => {
    try {
       const gpsLat = cookie.get('lat') as number
       const gpsLong = cookie.get('long') as number
-      const { data: getAllData, error: getError } = await supabase
+      const { data: dataArray, error: getError } = await supabase
          .from('weather_data')
          .select()
-      console.log(getAllData, getError)
+         .eq('isset', true)
+      console.log(dataArray, getError)
 
-      const isSetData = (getAllData as WeatherDataReponseType[])?.find(
-         (el) => el.isset
-      )
 
-      if (!isSetData) {
+      if (dataArray?.length == 0 || !dataArray) {
          return null
       }
+      const isSetData = dataArray[0] as {lat: number; long: number; isgps: boolean}
 
-      const lat = isSetData ? isSetData.lat : gpsLat
-      const long = isSetData ? isSetData.long : gpsLong
+      const isGps = isSetData.isgps 
+      let lat: number
+      let long: number
+      if (isSetData.isgps){
+         lat = gpsLat
+         long = gpsLong
+      } else {
+         lat = isSetData.lat
+         long = isSetData.long
+      }
 
       const res = await axios<AxiosResponse>(URL, {
          params: {
@@ -204,6 +214,7 @@ export const detailLoader = async () => {
          const returnData = {
             ...weatherData,
             ...geoObj,
+            isGps
          }
 
          return defer({ deferredData: returnData })

@@ -9,7 +9,9 @@ import WeatherIconValuePair from './components/WeatherIconValuePair'
 import { FiSunrise, FiSunset } from 'react-icons/fi'
 import { LiaGrinBeamSweatSolid, LiaTemperatureHighSolid } from 'react-icons/lia'
 import { BsFillCloudHazeFill } from 'react-icons/bs'
+import { ImLocation } from 'react-icons/im'
 import Loading from './components/Loading'
+import { PiWindDuotone } from 'react-icons/pi'
 
 export interface WeatherDataInterface {
    dt: number
@@ -19,6 +21,7 @@ export interface WeatherDataInterface {
    clouds: number
    rain?: number
    snow?: number
+   wind_speed: number
    weather: [
       {
          description: string
@@ -40,13 +43,14 @@ export interface CurrentWeatherDataInterface extends WeatherDataInterface {
 
 interface AppDataInterface {
    deferredData: {
+      isGps: boolean
       username: string
       avatar: string
       name: string
       state: string
       country: string
       timezone_offset: number
-      current: CurrentWeatherDataInterface 
+      current: CurrentWeatherDataInterface
    }
 }
 
@@ -56,7 +60,9 @@ const App = () => {
    const loaderData = useLoaderData()
 
    const renderContent = ({ deferredData }: AppDataInterface) => {
+      console.log(deferredData)
       const {
+         isGps,
          name,
          country,
          state,
@@ -69,6 +75,8 @@ const App = () => {
             sunset,
             temp,
             clouds,
+            wind_speed,
+            
             
             weather: [{ description, icon, main }],
          },
@@ -76,34 +84,41 @@ const App = () => {
 
       return (
          <>
-               <section className='p-20 w-[clamp(25rem,70vw,80rem)] rounded-lg bg-slate-50/10 backdrop-blur-sm relative after:absolute after:inset-[0.5rem] after:border-slate-700/50 after:border-2 after:rounded-lg flex flex-col after:z-[-1]'>
-                  <h1 className='text-center text-3xl text-slate-800'>
-                     Weather App
-                  </h1>
-                  <Underline />
-                  <Clock tzOffset={tzOffset} dt={dt} />
+            <section className='p-10 w-[clamp(25rem,70vw,80rem)] rounded-lg bg-slate-50/10 backdrop-blur-sm relative after:absolute after:inset-[0.5rem] after:border-slate-700/50 after:border-2 after:rounded-lg flex flex-col after:z-[-1]'>
+               <h1 className='text-center text-3xl text-slate-800'>
+                  Weather App
+               </h1>
+               <Underline />
+               <Clock tzOffset={tzOffset} dt={dt} />
 
-                  <article className='bg-[rgba(255,255,255,0.6)] text-zinc-900 rounded-md min-h-[10rem] p-8 backdrop-blur-xl'>
-                     <h2 className='text-2xl text-center'>
-                        Weather the weather in{' '}
-                        <span className=' relative'>
-                           {name}
-                           <div className=' absolute right-0 font-normal text-xs text-slate-600/50'>
-                              {state}, {country}
-                           </div>
-                        </span>
-                     </h2>
-                     <div>
-                        <div className='flex flex-col items-center justify-center relative'>
-                           <img
-                              src={`https://openweathermap.org/img/wn/${icon}@2x.png`}
-                              alt={main}
-                           />
-                           <div className='text-xs absolute bottom-2 left-[50%]'>
-                              {description}
-                           </div>
+               <article className='bg-[rgba(255,255,255,0.6)] text-zinc-900 rounded-md p-8 backdrop-blur-xl'>
+                  <h2 className='text-2xl text-center'>
+                     Weather the weather in{' '}
+                     <span className=' relative'>
+                        {name}
+                        <div className=' absolute right-0 font-normal text-xs text-slate-600/50 flex gap-1'>
+                           {isGps && <ImLocation />} {state}, {country}
+                        </div>
+                     </span>
+                  </h2>
+                  <div>
+                     <div className='flex flex-col items-center justify-center relative'>
+                        <img
+                           src={`https://openweathermap.org/img/wn/${icon}@2x.png`}
+                           alt={main}
+                        />
+                        <div className='text-xs absolute bottom-2 left-[50%]'>
+                           {description}
                         </div>
                      </div>
+                  </div>
+                  <div
+                     style={{
+                        boxShadow:
+                           '2px 2px 10px 1px rgba(0,0,0,.6), 3px 3px 15px 2px rgba(0,0,0,.4',
+                     }}
+                     className='bg-stone-800/60 text-white p-6 relative rounded-lg after:inset-[3px] after:absolute after:border-[1px] after:rounded-lg flex justify-center items-center mt-3'
+                  >
                      <div className='my-7 grid grid-cols-1 md:grid-cols-2 gap-4'>
                         <WeatherIconValuePair
                            icon={<LiaTemperatureHighSolid />}
@@ -134,10 +149,12 @@ const App = () => {
                            icon={<BsFillCloudHazeFill />}
                            iconValue={clouds.toString() + ' %'}
                         />
-                        {"rain" in deferredData.current ? "it's raining" : null}
+                        <WeatherIconValuePair icon={<PiWindDuotone/>} iconValue={wind_speed.toString() + ' m/s'}/>
+                        {'rain' in deferredData.current ? "it's raining" : null}
                      </div>
-                  </article>
-               </section>
+                  </div>
+               </article>
+            </section>
          </>
       )
    }

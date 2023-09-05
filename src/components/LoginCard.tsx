@@ -3,14 +3,21 @@ import thunder from '../assets/thunder.jpg'
 
 
 const LoginCard = ({ children }: React.PropsWithChildren) => {
-   return <div className='flex flex-col min-h-[100dvh]'>{children}</div>
+   return (
+      <div
+         style={{ backgroundImage: `url(${thunder})` }}
+         className='flex flex-col min-h-[100dvh] bg-cover bg-center'
+      >
+         {children}
+      </div>
+   )
 }
 
 LoginCard.Above = function ({ children }: React.PropsWithChildren) {
    return (
       <div
-         style={{ backgroundImage: `url(${thunder})` }}
-         className='h-72 bg-cover bg-[right_35%_bottom_40%]  bg-no-repeat shadow-whiteShadow'
+         
+         className='h-72'
       >
          {children}
       </div>

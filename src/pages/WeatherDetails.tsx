@@ -13,6 +13,7 @@ import FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion'
 import Underline from '../components/Underline'
 import WeatherIconValuePair from '../components/WeatherIconValuePair'
 import DayWeather from '../components/DayWeather'
+import { ImLocation } from 'react-icons/im'
 // Step 6 - Adding the chart and theme as dependency to the core fusioncharts
 ReactFC.fcRoot(FusionCharts, Line, FusionTheme)
 
@@ -40,6 +41,7 @@ interface DailyWeatherDataInterface extends WeatherDataInterface {
 
 interface DetailsDataInterface {
    deferredData: {
+      isGps: boolean
       name: string
       state: string
       country: string
@@ -206,11 +208,14 @@ const WeatherDetails = () => {
             <article className='my-10 bg-[rgba(255,255,255,0.6)] text-zinc-900 rounded-md min-h-[10rem] px-8 md:py-8 py-14 backdrop-blur-xl relative'>
                {/* @ts-ignore */}
                {/* <ReactFC {...hourlyTempConfigs} /> */}
-               <h2 className='text-center mb-4 text-slate-900'>
+               <h2 className='text-center mb-4 text-slate-900 text-2xl'>
                   Weather the next 24 hours
                </h2>
                <aside className='absolute top-2 right-10'>
-                  {deferredData.name}
+                  <h3 className='flex items-center gap-1'>
+                     <span>{deferredData.isGps && <ImLocation />}</span>
+                     {deferredData.name}
+                  </h3>
                   <div className=' absolute right-0 font-medium text-xs text-slate-600/50'>
                      {deferredData.state}, {deferredData.country}
                   </div>
@@ -278,7 +283,9 @@ const WeatherDetails = () => {
                   />
                </div>
                <Underline />
-               <h2 className='my-6 text-center'>Weather the next week</h2>
+               <h2 className='my-6 text-center text-2xl'>
+                  Weather the next week
+               </h2>
                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3'>
                   {splicedDailyWeatherArray.map((el, index) => {
                      return <DayWeather key={index} {...el} />
