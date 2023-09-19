@@ -20,6 +20,7 @@ interface DatabaseContextInterface {
 }
 const SUPABASE_URL = import.meta.env.VITE_URL as string
 const SUPABASE_API_KEY = import.meta.env.VITE_API_KEY as string
+console.log(SUPABASE_URL, SUPABASE_API_KEY)
 // eslint-disable-next-line react-refresh/only-export-components
 export const supabase = createClient(SUPABASE_URL, SUPABASE_API_KEY)
 // export const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE)
