@@ -1,6 +1,4 @@
 import { Await, Link, useLoaderData } from 'react-router-dom'
-// import { useDatabaseContext } from './context/DataBaseContextProvider'
-// import { useWeatherContext } from './context/WeatherContextProvider'
 import Underline from './components/Underline'
 import Clock from './components/Clock'
 import { Suspense } from 'react'
@@ -12,6 +10,8 @@ import { BsFillCloudHazeFill } from 'react-icons/bs'
 import { ImLocation } from 'react-icons/im'
 import Loading from './components/Loading'
 import { PiWindDuotone } from 'react-icons/pi'
+import { rainingIntensity } from './utils/utils'
+
 
 export interface WeatherDataInterface {
    dt: number
@@ -19,7 +19,6 @@ export interface WeatherDataInterface {
    sunrise: number
    sunset: number
    clouds: number
-   rain?: number
    snow?: number
    wind_speed: number
    weather: [
@@ -34,11 +33,17 @@ export interface WeatherDataInterface {
 export interface HourlyWeatherDataInterface extends WeatherDataInterface {
    feels_like: number,
    temp: number
-   pop: number 
+   pop: number
+   rain?: {
+      "1h": number
+   }
 }
 export interface CurrentWeatherDataInterface extends WeatherDataInterface {
    feels_like: number,
-   temp: number
+   temp: number,
+   rain?: {
+      "1h": number
+   }
 }
 
 interface AppDataInterface {
@@ -55,9 +60,8 @@ interface AppDataInterface {
 }
 
 const App = () => {
-   // const contextData = useWeatherContext()
-   // const db = useDatabaseContext()
-   const loaderData = useLoaderData()
+
+   const loaderData = useLoaderData() as AppDataInterface
 
    const renderContent = ({ deferredData }: AppDataInterface) => {
       console.log(deferredData)
@@ -76,7 +80,7 @@ const App = () => {
             temp,
             clouds,
             wind_speed,
-            
+            rain,
             
             weather: [{ description, icon, main }],
          },
@@ -117,7 +121,7 @@ const App = () => {
                         boxShadow:
                            '2px 2px 10px 1px rgba(0,0,0,.6), 3px 3px 15px 2px rgba(0,0,0,.4',
                      }}
-                     className='bg-stone-800/60 text-white p-6 relative rounded-lg after:inset-[3px] after:absolute after:border-[1px] after:rounded-lg flex justify-center items-center mt-3'
+                     className='bg-stone-800/60 text-white p-6 relative rounded-lg after:inset-[3px] after:absolute after:border-[1px] after:rounded-lg flex flex-col justify-center items-center mt-3'
                   >
                      <div className='my-7 grid grid-cols-1 md:grid-cols-2 gap-4'>
                         <WeatherIconValuePair
@@ -149,9 +153,17 @@ const App = () => {
                            icon={<BsFillCloudHazeFill />}
                            iconValue={clouds.toString() + ' %'}
                         />
-                        <WeatherIconValuePair icon={<PiWindDuotone/>} iconValue={wind_speed.toString() + ' m/s'}/>
-                        {'rain' in deferredData.current ? "it's raining" : null}
+                        <WeatherIconValuePair
+                           icon={<PiWindDuotone />}
+                           iconValue={wind_speed.toString() + ' m/s'}
+                        />
                      </div>
+                     {'rain' in deferredData.current ? (
+                        <div className='bg-[rgba(255,255,255,0.7)] rounded-lg border-4 backdrop-blur-sm p-4 text-slate-700 text-sm'>
+                           <h3 className="font-serif">{rainingIntensity(rain!['1h'])}</h3>
+                           <p className="mt-3">{`${rain!['1h'].toString()} mm`}</p>
+                        </div>
+                     ) : null}
                   </div>
                </article>
             </section>

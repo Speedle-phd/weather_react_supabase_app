@@ -1,7 +1,7 @@
 import { Form, Link, useLocation, useNavigate, useNavigation } from 'react-router-dom'
 import LoginFormControl from './LoginFormControl'
 import { useDatabaseContext } from '../context/DataBaseContextProvider'
-import { useEffect, useRef } from 'react'
+import {  useRef } from 'react'
 
 
 const LoginForm = () => {
@@ -19,18 +19,12 @@ const LoginForm = () => {
       const email = fd.get('email') as string
       const password = fd.get('password') as string
       if (path === 'login') {
-         console.log('login')
          db?.loginFn(email, password).catch((err) => console.log(err)).finally(() => navigate("/"))
       } else if (path === 'signup') {
-         console.log('signup')
          const username = fd.get('username') as string
          db?.signUpFn(email, password, username).catch((err) => console.log(err)).finally(() => navigate("/"))
       }
    }
-
-   useEffect(() => {
-      console.log(navigation.state)
-   }, [navigation.state])
 
    return (
       <>

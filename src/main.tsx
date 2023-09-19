@@ -8,7 +8,7 @@ import RootLayout from './layout/RootLayout'
 import AuthLayout from './layout/AuthLayout'
 import Login from './pages/Login'
 import DatabaseContextProvider from './context/DataBaseContextProvider'
-import { appLoader, detailLoader, isLoggedIn, isNotLoggedIn } from './api/loader'
+import { appLoader, detailLoader, isLoggedIn, isNotLoggedIn, settingsLoader } from './api/loader'
 import ErrorHandler from './components/ErrorHandler'
 import WeatherDetails from './pages/WeatherDetails'
 import Locations from './pages/Locations'
@@ -42,7 +42,7 @@ const router = createBrowserRouter([
          {
             path: 'settings',
             element: <Settings />,
-            // loader: detailLoader,
+            loader: settingsLoader,
             errorElement: <ErrorHandler />,
          },
       ],

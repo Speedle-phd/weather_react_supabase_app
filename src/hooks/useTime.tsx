@@ -12,7 +12,6 @@ const useTime = (initialDate: Date) => {
       const myInterval = setInterval(() => {
          setTimeFn(new Date())
       }, 1000 * 60 * 30)
-      console.log(time)
       return () => clearInterval(myInterval)
    },[time])
    return [time, setTimeFn]

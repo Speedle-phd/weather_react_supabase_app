@@ -1,7 +1,8 @@
 import { redirect, defer } from 'react-router-dom'
-import { CookieType, supabase } from '../context/DataBaseContextProvider'
+import { supabase } from '../context/DataBaseContextProvider'
 import axios, { AxiosResponse } from 'axios'
 import Cookies from 'universal-cookie'
+
 
 const cookie = new Cookies()
 
@@ -21,7 +22,6 @@ export const isLoggedIn = async () => {
 // TODO: handle redirect to "/". Fails for now because after login page isn't rerendered and loader isn't triggered
 export const isNotLoggedIn = async () => {
    const { data } = await supabase.auth.getSession()
-   console.log(data)
    if (data.session) {
       return redirect('/')
    }
@@ -54,52 +54,75 @@ export const appLoader = async () => {
       const gpsLong = cookie.get('long') as number
       const { data } = await supabase.auth.getSession()
       const user = data.session!.user
-      console.log(user)
       const username = user.user_metadata.username as string
       const avatar = user.user_metadata.avatar as string
+      const gpsPermission = await navigator.permissions.query({name: "geolocation"})
+      const permissionState =  gpsPermission.state
       //GPS
-      const { data: gpsData, error: gpsError } = await supabase
-         .from('weather_data')
-         .update([
-            {
-               lat: gpsLat,
-               long: gpsLong,
-               user_id: user.id,
-               isgps: true,
-               updated_at: new Date(),
-            },
-         ])
-         .match({ isgps: true, user_id: user.id })
-         .select()
-      console.log(gpsData, gpsError)
-      if (gpsData!.length === 0) {
-         const { data: insertData, error: insertError } = await supabase
+      let gpsActivated = false
+      console.log(permissionState)
+      if (permissionState === 'granted') {
+         const { data: gpsUpdateData, error: gpsError } = await supabase
             .from('weather_data')
-            .insert([
+            .update([
                {
                   lat: gpsLat,
                   long: gpsLong,
                   user_id: user.id,
                   isgps: true,
+                  updated_at: new Date(),
                },
             ])
+            .match({ isgps: true, user_id: user.id })
             .select()
-         console.log(insertData, insertError)
+            console.log(gpsUpdateData)
+         if (gpsUpdateData!.length === 0) {
+            
+            const { data: insertGpsData, error: insertError } = await supabase
+               .from('weather_data')
+               .insert([
+                  {
+                     lat: gpsLat,
+                     long: gpsLong,
+                     user_id: user.id,
+                     isgps: true,
+                  },
+               ])
+               .select()
+               if (insertError) {
+                  console.log(insertError)
+               }
+               console.log(insertGpsData)
+               if (insertGpsData) {
+                  gpsActivated = true
+               }
+         } else {
+            gpsActivated = true
+         }
+
+      } else {
+         console.log("error")
+         const {error: deleteError} = await supabase.from('weather_data').delete().eq('isgps', true)
+         if( deleteError) {
+            console.log(deleteError)
+         }
       }
 
-      const { data: getAllData, error: getError } = await supabase
+      const { data: getIsSetData, error: getError } = await supabase
          .from('weather_data')
          .select()
          .eq("isset", true)
-      console.log(getAllData, getError)
 
-      const isSetData = (getAllData as WeatherDataReponseType[])?.find(
+      const isSetData = (getIsSetData as WeatherDataReponseType[])?.find(
          (el) => el.isset
       )
       const isGps = isSetData ? isSetData?.isgps : true
       const lat = isSetData ? isSetData.lat : gpsLat
       const long = isSetData ? isSetData.long : gpsLong
-      if (gpsData?.length === 0) {
+
+      console.log(getIsSetData)
+      if (!gpsActivated && getIsSetData!.length === 0) {
+         console.log('why?')
          return null
       }
 
@@ -114,7 +137,7 @@ export const appLoader = async () => {
                ])
                .match({ isgps: true, user_id: user.id })
                .select()
-         console.log(isSetUpdateData, isSetUpdateError)
+
       }
 
       const res = await axios<AxiosResponse>(URL, {
@@ -143,12 +166,11 @@ export const appLoader = async () => {
             name: geoData[0].name,
          }
          const returnData = { ...weatherData, ...geoObj, username, avatar, isGps }
-
+         console.log(returnData)
          return defer({ deferredData: returnData })
       }
    } catch (error) {
       if (axios.isAxiosError(error)) {
-         console.log('axiosError')
          throw {
             msg: error.response?.statusText,
             status: error.response?.status,
@@ -167,7 +189,6 @@ export const detailLoader = async () => {
          .from('weather_data')
          .select()
          .eq('isset', true)
-      console.log(dataArray, getError)
 
 
       if (dataArray?.length == 0 || !dataArray) {
@@ -185,7 +206,7 @@ export const detailLoader = async () => {
          lat = isSetData.lat
          long = isSetData.long
       }
-
+      console.log(lat, long)
       const res = await axios<AxiosResponse>(URL, {
          params: {
             units: 'metric',
@@ -195,6 +216,7 @@ export const detailLoader = async () => {
             exclude: 'minutely',
          },
       })
+
       const res2 = await axios<GeoDataType[]>(GEO_URL, {
          params: {
             lat,
@@ -221,7 +243,6 @@ export const detailLoader = async () => {
       }
    } catch (error) {
       if (axios.isAxiosError(error)) {
-         console.log('axiosError')
          throw {
             msg: error.response?.statusText,
             status: error.response?.status,
@@ -231,4 +252,18 @@ export const detailLoader = async () => {
       }
    }
    return true
+}
+
+export const settingsLoader = async() => {
+   try {
+      const { data: userData } = await supabase.auth.getUser()
+      const email = userData?.user?.email
+      const username = userData.user?.user_metadata.username as string
+      const avatar = userData.user?.user_metadata.avatar as string
+      const userId = userData.user?.id
+      return {deferredData: {username, avatar, email, userId}}
+   } catch (err) {
+      console.log(err)
+      throw err
+   }
 }

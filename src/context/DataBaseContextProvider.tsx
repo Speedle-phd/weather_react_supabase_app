@@ -8,17 +8,21 @@ export type CookieType = Session & { user: User }
 
 interface DatabaseContextInterface {
    user: User | null
+   username: string | null
    session: Session | null
    loginFn: (e: string, p: string) => Promise<void>
    logoutFn: () => Promise<void>
    signUpFn: (e: string, p: string, u: string) => Promise<void>
    provideCookie: () => CookieType
    getCurrentSession: () => Promise<Session | null | undefined>
+   deleteUser: (id: string) => Promise<void>
+   changeUsername: (u: string) => void
 }
-const SUPABASE_URL = import.meta.env.VITE_SERVICE_ROLE as string
+const SUPABASE_URL = import.meta.env.VITE_URL as string
 const SUPABASE_API_KEY = import.meta.env.VITE_API_KEY as string
 // eslint-disable-next-line react-refresh/only-export-components
 export const supabase = createClient(SUPABASE_URL, SUPABASE_API_KEY)
+// export const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE)
 
 const DatabaseContext = createContext<DatabaseContextInterface | null>(null)
 
@@ -28,7 +32,13 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
    const [session, setSession] = useState<Session | null>(pandaCookie ?? null)
    const [supabaseError, setSupabaseError] = useState<AuthError | null>(null)
    const [mount, setMount] = useState(true)
-   
+   const [username, setUsername] = useState<string | null>(null)
+   console.log(username)
+
+   const changeUsername = (username: string) => {
+      setUsername(username)
+   }
+
    const provideCookie = () => {
       return cookie.get('panda-weather-cookie') as CookieType
    }
@@ -50,6 +60,14 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
          if (error) {
             setSupabaseError(error)
          }
+      } catch (error) {
+         console.log(error)
+      }
+   }
+   const deleteUser = async (userId: string) => {
+      try {
+         await supabase.rpc('delete_user', { id: userId })
+         await supabase.auth.signOut()
       } catch (error) {
          console.log(error)
       }
@@ -151,16 +169,23 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
       }, 4000)
    }, [supabaseError])
 
+   useEffect(() => {
+      changeUsername(user?.user_metadata.username as string)
+   }, [user])
+
    return (
       <DatabaseContext.Provider
          value={{
             user,
+            username,
             session,
             loginFn,
             logoutFn,
             signUpFn,
             provideCookie,
             getCurrentSession,
+            deleteUser,
+            changeUsername,
          }}
       >
          {supabaseError ? (

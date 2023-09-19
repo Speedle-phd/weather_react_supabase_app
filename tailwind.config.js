@@ -12,9 +12,9 @@ module.exports = {
    // content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
    theme: {
       backgroundSize: {
-         '3000': "3000px",
-         'cover': 'cover',
-         'contain': 'contain',
+         3000: '3000px',
+         cover: 'cover',
+         contain: 'contain',
       },
       fontFamily: {
          sans: ['Ubuntu', 'sans-serif'],
@@ -30,6 +30,9 @@ module.exports = {
       extend: {
          boxShadow: {
             whiteShadow: '0 25px 50px -20px rgba(255, 255, 255, 0.4)',
+         },
+         backgroundImage: {
+            cloudPng: "url('./assets/cloud.png')",
          },
          colors: {
             border: 'hsl(var(--border))',

@@ -37,7 +37,7 @@ const RootLayout = () => {
       <>
          {db?.user ? (
             <div
-               className='cloud-animation bg-3000 bg-repeat md:bg-cover md:bg-no-repeat'
+               className='cloud-animation bg-3000 bg-repeat md:bg-cover md:bg-no-repeat  overflow-hidden'
                style={{
                   backgroundImage: `url(${backgroundImage!})`,
                   backgroundPosition: 'center',
@@ -111,11 +111,11 @@ const RootLayout = () => {
                      </ControlButton>
                      {/* //TODO: Make a component */}
                      <aside className='text-md md:text-xl md:p-5 text-slate-900 font-bold p-3 bg-slate-50/70 backdrop-blur-lg rounded-xl absolute left-2'>{`Welcome ${
-                        db.user.user_metadata.username as string
+                        db.username as string
                      }`}</aside>
                   </nav>
                </aside>
-               <main className='my-5 gap-4 min-h-[100dvh] font-thick text-lg font-bold flex flex-col items-center  w-[max(20rem,_calc(100vw_-_4rem))] mx-auto'>
+               <main className='my-5 gap-4 min-h-[100dvh] font-thick text-lg font-bold flex flex-col items-center  w-[max(20rem,_calc(100vw_-_4rem))] mx-auto '>
                   <Outlet />
                </main>
                <aside className='text-right p-3 text-slate-300/50'>

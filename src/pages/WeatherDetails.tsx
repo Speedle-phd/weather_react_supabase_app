@@ -37,6 +37,7 @@ interface DailyWeatherDataInterface extends WeatherDataInterface {
    summary: string
    pop: number
    wind_speed: number
+   rain: number
 }
 
 interface DetailsDataInterface {
@@ -115,9 +116,9 @@ const WeatherDetails = () => {
          const temp = hour.temp
          const icon = hour.weather[0].icon
          let rain: string
-         const pop = `${hour.pop * 100} %`
+         const pop = `${(hour.pop * 100).toFixed()} %`
          if (hour.rain) {
-            rain = `${hour.rain} mm`
+            rain = `${hour.rain["1h"]} mm`
          } else {
             rain = `0 mm`
          }
@@ -155,7 +156,7 @@ const WeatherDetails = () => {
          const sunset = new Date(
             day.sunset * 1000 + deferredData.timezone_offset
          ).toLocaleTimeString()
-         const pop = `${day.pop} %`
+         const pop = `${day.pop.toFixed()} %`
          const tempMax = `${day.temp.max} °C`
          const tempMin = `${day.temp.min} °C`
          const icon = day.weather[0].icon
@@ -167,7 +168,7 @@ const WeatherDetails = () => {
             rain = '0 mm'
          }
          const summary = day.summary
-         const humidity = `${day.humidity} %`
+         const humidity = `${day.humidity.toFixed()} %`
          const windSpeed = `${day.wind_speed} m/s`
          dailyWeatherArray.push({date, sunrise, sunset, pop, tempMax, tempMin, icon, description, summary, humidity, windSpeed, rain})
       }
