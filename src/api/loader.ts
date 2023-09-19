@@ -122,7 +122,6 @@ export const appLoader = async () => {
 
       console.log(getIsSetData)
       if (!gpsActivated && getIsSetData!.length === 0) {
-         console.log('why?')
          return null
       }
 
@@ -182,9 +181,10 @@ export const appLoader = async () => {
 }
 
 export const detailLoader = async () => {
+   //FIXME: Fix the problem where GPS is activated but for some reason I get a bad request error because my cookies won't work or I don't provide a valid lat or long value
    try {
-      const gpsLat = cookie.get('lat') as number
-      const gpsLong = cookie.get('long') as number
+      // const gpsLat = cookie.get('lat') as number
+      // const gpsLong = cookie.get('long') as number
       const { data: dataArray, error: getError } = await supabase
          .from('weather_data')
          .select()
@@ -197,16 +197,9 @@ export const detailLoader = async () => {
       const isSetData = dataArray[0] as {lat: number; long: number; isgps: boolean}
 
       const isGps = isSetData.isgps 
-      let lat: number
-      let long: number
-      if (isSetData.isgps){
-         lat = gpsLat
-         long = gpsLong
-      } else {
-         lat = isSetData.lat
-         long = isSetData.long
-      }
-      console.log(lat, long)
+      const lat = isSetData.lat
+      const long = isSetData.long
+
       const res = await axios<AxiosResponse>(URL, {
          params: {
             units: 'metric',

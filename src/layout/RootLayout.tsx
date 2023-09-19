@@ -110,9 +110,14 @@ const RootLayout = () => {
                         )}
                      </ControlButton>
                      {/* //TODO: Make a component */}
-                     <aside className='text-md md:text-xl md:p-5 text-slate-900 font-bold p-3 bg-slate-50/70 backdrop-blur-lg rounded-xl absolute left-2'>{`Welcome ${
-                        db.username as string
-                     }`}</aside>
+                     <aside className='text-md md:text-xl md:px-5 text-slate-900 font-bold px-3 py-2 gap-3 bg-slate-50/70 backdrop-blur-lg rounded-xl absolute left-2 flex items-center'><span>
+                        {`Welcome ${
+                           db.username as string
+                        }`}
+                     </span>
+                     
+
+                     <img className="rounded-full w-12 h-12 object-cover object-center" src={db.avatar!} alt="Avatar" /></aside>
                   </nav>
                </aside>
                <main className='my-5 gap-4 min-h-[100dvh] font-thick text-lg font-bold flex flex-col items-center  w-[max(20rem,_calc(100vw_-_4rem))] mx-auto '>

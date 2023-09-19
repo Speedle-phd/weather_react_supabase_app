@@ -73,7 +73,7 @@ const WeatherContextProvider = ({ children }: React.PropsWithChildren) => {
       <WeatherContext.Provider value={{ setCurrentLocationFn, location }}>
          {children}
          {locationModal ? (
-            <aside className='flex flex-col items-center fixed top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] bg-zinc-800 w-[50vw] py-3 px-6 rounded-lg after:inset-[-200vw] after:absolute after:bg-black/40 after:z-[-1] max-w-[30rem] '>
+            <aside className='flex flex-col items-center fixed top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] bg-zinc-800 py-3 px-6 rounded-lg after:inset-[-200vw] after:absolute after:bg-black/40 after:z-[-1] w-[clamp(20rem,50vw,40rem)]'>
                <h2 className='text-center text-3xl mb-5'>
                   Permission for geolocation
                </h2>

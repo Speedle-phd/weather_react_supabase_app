@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { AuthError, Session, User, createClient } from '@supabase/supabase-js'
 import Cookies from 'universal-cookie'
 
@@ -9,6 +9,7 @@ export type CookieType = Session & { user: User }
 interface DatabaseContextInterface {
    user: User | null
    username: string | null
+   avatar: string | null
    session: Session | null
    loginFn: (e: string, p: string) => Promise<void>
    logoutFn: () => Promise<void>
@@ -17,6 +18,7 @@ interface DatabaseContextInterface {
    getCurrentSession: () => Promise<Session | null | undefined>
    deleteUser: (id: string) => Promise<void>
    changeUsername: (u: string) => void
+   changeAvatar: (a: string) => void
 }
 const SUPABASE_URL = import.meta.env.VITE_URL as string
 const SUPABASE_API_KEY = import.meta.env.VITE_API_KEY as string
@@ -34,10 +36,14 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
    const [supabaseError, setSupabaseError] = useState<AuthError | null>(null)
    const [mount, setMount] = useState(true)
    const [username, setUsername] = useState<string | null>(null)
-   console.log(username)
+   const [avatar, setAvatar] = useState<string | null>(null)
+
 
    const changeUsername = (username: string) => {
       setUsername(username)
+   }
+   const changeAvatar = (newAvatar: string) => {
+      setAvatar(newAvatar)
    }
 
    const provideCookie = () => {
@@ -86,7 +92,8 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
             options: {
                data: {
                   username,
-                  avatar: '',
+                  avatar:
+                     'https://pubbsysucrloxsdbglwj.supabase.co/storage/v1/object/public/avatars/placeholder_avatar.jpg',
                },
             },
          })
@@ -173,10 +180,14 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
    useEffect(() => {
       changeUsername(user?.user_metadata.username as string)
    }, [user])
+   useEffect(() => {
+      changeAvatar(user?.user_metadata.avatar as string)
+   }, [user])
 
    return (
       <DatabaseContext.Provider
          value={{
+            avatar,
             user,
             username,
             session,
@@ -187,6 +198,7 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
             getCurrentSession,
             deleteUser,
             changeUsername,
+            changeAvatar,
          }}
       >
          {supabaseError ? (

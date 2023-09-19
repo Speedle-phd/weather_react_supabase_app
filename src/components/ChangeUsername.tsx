@@ -40,6 +40,7 @@ const ChangeUsername = () => {
                   required
                   id="new-username"
                   name="new-username"
+                  minLength={3}
                />
                <button
                   className='border-4 border-slate-800 rounded-lg text-white bg-slate-600 text-sm py-1 hover:bg-slate-700/80 focus-visible:bg-slate-700/80'
