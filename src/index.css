@@ -67,6 +67,14 @@
 
       --ring: 217.2 32.6% 17.5%;
    }
+   .loading-moon{
+      animation: spinMoon 2000ms infinite linear
+   }
+   @keyframes spinMoon {
+      to {
+         rotate: 360deg
+      }
+   }
 
    .clock{
    --clock-clr: #444;

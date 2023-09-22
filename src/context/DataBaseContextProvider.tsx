@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { AuthError, Session, User, createClient } from '@supabase/supabase-js'
 import Cookies from 'universal-cookie'
 
@@ -39,12 +39,16 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
    const [avatar, setAvatar] = useState<string | null>(null)
 
 
+
+
    const changeUsername = (username: string) => {
       setUsername(username)
    }
    const changeAvatar = (newAvatar: string) => {
       setAvatar(newAvatar)
    }
+
+
 
    const provideCookie = () => {
       return cookie.get('panda-weather-cookie') as CookieType
@@ -183,6 +187,7 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
    useEffect(() => {
       changeAvatar(user?.user_metadata.avatar as string)
    }, [user])
+
 
    return (
       <DatabaseContext.Provider

@@ -54,8 +54,10 @@ export const appLoader = async () => {
       const gpsLong = cookie.get('long') as number
       const { data } = await supabase.auth.getSession()
       const user = data.session!.user
+      console.log(user)
       const username = user.user_metadata.username as string
       const avatar = user.user_metadata.avatar as string
+      // const avatarPosition = user.user_metadata.avatarPosition as {imgXPosition: number; imgYPosition: number}
       const gpsPermission = await navigator.permissions.query({name: "geolocation"})
       const permissionState =  gpsPermission.state
       //GPS
