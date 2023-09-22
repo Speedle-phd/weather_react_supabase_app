@@ -159,9 +159,10 @@ const App = () => {
                         />
                      </div>
                      {'rain' in deferredData.current ? (
-                        <div className='bg-[rgba(255,255,255,0.7)] rounded-lg border-4 backdrop-blur-sm p-4 text-slate-700 text-sm'>
-                           <h3 className="font-serif">{rainingIntensity(rain!['1h'])}</h3>
-                           <p className="mt-3">{`${rain!['1h'].toString()} mm`}</p>
+                        <div className='bg-slate-800 rounded-lg border-4 border-slate-900 backdrop-blur-sm p-4 text-white/80 text-sm text-center'>
+                           <h3 className="text-2xl underline underline-offset-8">Raining Zone</h3>
+                           <h4 className="font-serif italic mt-5 mb-3">{rainingIntensity(rain!['1h'])}</h4>
+                           <p className="">{`${rain!['1h'].toString()} mm/h`}</p>
                         </div>
                      ) : null}
                   </div>
