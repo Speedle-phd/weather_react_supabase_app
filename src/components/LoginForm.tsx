@@ -59,6 +59,7 @@ const LoginForm = () => {
                         Create one lightning fast
                      </Link>
                   </div>
+                  <Link to="/reset"><button className="bg-stone-600 text-white/80 px-3 py-1 rounded-lg hover:bg-stone-800 focus-visible:bg-stone-800 transition-colors">Forgot Password?</button></Link>
                </>
             ) : (
                <>

@@ -28,15 +28,24 @@ const WeatherContextProvider = ({ children }: React.PropsWithChildren) => {
    const success = useCallback((pos: GeolocationPosition) => {
       const { latitude, longitude } = pos.coords
       // console.log(`More or less ${accuracy} meters.`)
-      cookie.set('lat', latitude, { path: '/' })
-      cookie.set('long', longitude, { path: '/' })
+      cookie.set('panda-cookie-lat', latitude, { path: '/' })
+      cookie.set('panda-cookie-long', longitude, { path: '/' })
       setCurrentLocationFn({ latitude, longitude })
    }, [])
    const error = useCallback((err: GeolocationPositionError) => {
-      cookie.remove('lat', { path: '/' })
-      cookie.remove('long', { path: '/' })
+      cookie.remove('panda-cookie-lat', { path: '/' })
+      cookie.remove('panda-cookie-long', { path: '/' })
       console.warn(`ERROR(${err.code}): ${err.message}`)
    }, [])
+   const allowPermission = useCallback(() => {
+      const options = {
+         enableHighAccuracy: true,
+         timeout: 5000,
+         maximumAge: 0,
+      }
+      navigator.geolocation.getCurrentPosition(success, error, options)
+      setLocationModal(false)
+   },[error, success])
 
    const checkPermission = useCallback(async() => {
       const permission = await navigator.permissions.query({
@@ -45,18 +54,14 @@ const WeatherContextProvider = ({ children }: React.PropsWithChildren) => {
       if (permission.state === 'prompt') {
          setLocationModal(true)
       } else {
+         if (permission.state === 'granted'){
+            allowPermission()
+         } else if (permission.state === 'denied') {
+            console.log(permission.state)
+         }
          setLocationModal(false)
       }
-   },[])
-   const allowPermission = () => {
-      const options = {
-         enableHighAccuracy: true,
-         timeout: 5000,
-         maximumAge: 0,
-      }
-      navigator.geolocation.getCurrentPosition(success, error, options)
-      setLocationModal(false)
-   }
+   },[allowPermission])
    // const denyPermission = () => {
    //    setLocationModal(false)
    // }

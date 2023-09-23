@@ -13,6 +13,8 @@ import ErrorHandler from './components/ErrorHandler'
 import WeatherDetails from './pages/WeatherDetails'
 import Locations from './pages/Locations'
 import Settings from './pages/Settings'
+import Reset from './pages/Reset'
+import Restoring from './pages/Restoring'
 
 
 const router = createBrowserRouter([
@@ -59,6 +61,16 @@ const router = createBrowserRouter([
          {
             path: '/login',
             element: <Login />,
+            // loader: isNotLoggedIn,
+         },
+         {
+            path: '/reset',
+            element: <Reset />,
+            // loader: isNotLoggedIn,
+         },
+         {
+            path: '/restoring_password',
+            element: <Restoring />,
             // loader: isNotLoggedIn,
          },
       ],

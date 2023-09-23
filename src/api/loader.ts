@@ -50,11 +50,10 @@ type WeatherDataReponseType = {
 
 export const appLoader = async () => {
    try {
-      const gpsLat = cookie.get('lat') as number
-      const gpsLong = cookie.get('long') as number
+      const gpsLat = cookie.get('panda-cookie-lat') as number
+      const gpsLong = cookie.get('panda-cookie-long') as number
       const { data } = await supabase.auth.getSession()
       const user = data.session!.user
-      console.log(user)
       const username = user.user_metadata.username as string
       const avatar = user.user_metadata.avatar as string
       // const avatarPosition = user.user_metadata.avatarPosition as {imgXPosition: number; imgYPosition: number}
@@ -62,9 +61,8 @@ export const appLoader = async () => {
       const permissionState =  gpsPermission.state
       //GPS
       let gpsActivated = false
-      console.log(permissionState)
       if (permissionState === 'granted') {
-         const { data: gpsUpdateData, error: gpsError } = await supabase
+         const { data: gpsUpdateData, error: gpsUpdateError } = await supabase
             .from('weather_data')
             .update([
                {
@@ -77,7 +75,9 @@ export const appLoader = async () => {
             ])
             .match({ isgps: true, user_id: user.id })
             .select()
-            console.log(gpsUpdateData)
+            if(gpsUpdateError){
+               console.log(gpsUpdateError)
+            }
          if (gpsUpdateData!.length === 0) {
             
             const { data: insertGpsData, error: insertError } = await supabase
