@@ -110,7 +110,7 @@ const RootLayout = () => {
                         )}
                      </ControlButton>
                      {/* //TODO: Make a component */}
-                     <aside className='text-sm md:text-xl md:px-5 text-slate-900 font-bold px-3 py-2 gap-3 bg-slate-50/70 backdrop-blur-lg rounded-xl absolute left-2 flex flex-col md:flex-row items-center'><span>
+                     <aside className='text-sm md:text-xl md:px-5 text-slate-900 font-bold px-3 py-2 gap-3 bg-slate-50/70 backdrop-blur-lg rounded-xl absolute left-2 flex flex-col sm:flex-row items-center'><span>
                         <span className="hidden md:inline-block">Welcome </span>
                         {` ${
                            db.username as string

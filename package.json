@@ -19,6 +19,7 @@
     "fusioncharts": "^3.20.0",
     "lucide-react": "^0.263.0",
     "react": "^18.2.0",
+    "react-cropper": "^2.3.3",
     "react-dom": "^18.2.0",
     "react-fusioncharts": "^4.0.0",
     "react-icons": "^4.10.1",
