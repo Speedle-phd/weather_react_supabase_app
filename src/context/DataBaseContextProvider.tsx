@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { AuthError, Session, User, createClient } from '@supabase/supabase-js'
 import Cookies from 'universal-cookie'
+import { Database } from '../types/database.types'
 
 const cookie = new Cookies()
 
@@ -37,7 +38,7 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
    const [mount, setMount] = useState(true)
    const [username, setUsername] = useState<string | null>(null)
    const [avatar, setAvatar] = useState<string | null>(null)
-
+   
 
 
 

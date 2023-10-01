@@ -2,7 +2,7 @@ import { redirect, defer } from 'react-router-dom'
 import { supabase } from '../context/DataBaseContextProvider'
 import axios, { AxiosResponse } from 'axios'
 import Cookies from 'universal-cookie'
-
+import { User } from '@supabase/supabase-js'
 
 const cookie = new Cookies()
 
@@ -28,7 +28,7 @@ export const isNotLoggedIn = async () => {
    return true
 }
 
-type GeoDataType = {
+export type GeoDataType = {
    country: string
    lat: number
    local_names: object
@@ -48,6 +48,9 @@ type WeatherDataReponseType = {
    user_id: string
 }
 
+
+
+
 export const appLoader = async () => {
    try {
       const gpsLat = cookie.get('panda-cookie-lat') as number
@@ -56,9 +59,12 @@ export const appLoader = async () => {
       const user = data.session!.user
       const username = user.user_metadata.username as string
       const avatar = user.user_metadata.avatar as string
+
       // const avatarPosition = user.user_metadata.avatarPosition as {imgXPosition: number; imgYPosition: number}
-      const gpsPermission = await navigator.permissions.query({name: "geolocation"})
-      const permissionState =  gpsPermission.state
+      const gpsPermission = await navigator.permissions.query({
+         name: 'geolocation',
+      })
+      const permissionState = gpsPermission.state
       //GPS
       let gpsActivated = false
       if (permissionState === 'granted') {
@@ -75,11 +81,10 @@ export const appLoader = async () => {
             ])
             .match({ isgps: true, user_id: user.id })
             .select()
-            if(gpsUpdateError){
-               console.log(gpsUpdateError)
-            }
+         if (gpsUpdateError) {
+            console.log(gpsUpdateError)
+         }
          if (gpsUpdateData!.length === 0) {
-            
             const { data: insertGpsData, error: insertError } = await supabase
                .from('weather_data')
                .insert([
@@ -91,21 +96,23 @@ export const appLoader = async () => {
                   },
                ])
                .select()
-               if (insertError) {
-                  console.log(insertError)
-               }
-               console.log(insertGpsData)
-               if (insertGpsData) {
-                  gpsActivated = true
-               }
+            if (insertError) {
+               console.log(insertError)
+            }
+            console.log(insertGpsData)
+            if (insertGpsData) {
+               gpsActivated = true
+            }
          } else {
             gpsActivated = true
          }
-
       } else {
-         console.log("error")
-         const {error: deleteError} = await supabase.from('weather_data').delete().eq('isgps', true)
-         if( deleteError) {
+         console.log('error')
+         const { error: deleteError } = await supabase
+            .from('weather_data')
+            .delete()
+            .eq('isgps', true)
+         if (deleteError) {
             console.log(deleteError)
          }
       }
@@ -113,7 +120,7 @@ export const appLoader = async () => {
       const { data: getIsSetData, error: getError } = await supabase
          .from('weather_data')
          .select()
-         .eq("isset", true)
+         .eq('isset', true)
 
       const isSetData = (getIsSetData as WeatherDataReponseType[])?.find(
          (el) => el.isset
@@ -138,7 +145,6 @@ export const appLoader = async () => {
                ])
                .match({ isgps: true, user_id: user.id })
                .select()
-
       }
 
       const res = await axios<AxiosResponse>(URL, {
@@ -166,7 +172,13 @@ export const appLoader = async () => {
             country: geoData[0].country,
             name: geoData[0].name,
          }
-         const returnData = { ...weatherData, ...geoObj, username, avatar, isGps }
+         const returnData = {
+            ...weatherData,
+            ...geoObj,
+            username,
+            avatar,
+            isGps,
+         }
          console.log(returnData)
          return defer({ deferredData: returnData })
       }
@@ -183,7 +195,6 @@ export const appLoader = async () => {
 }
 
 export const detailLoader = async () => {
-   //FIXME: Fix the problem where GPS is activated but for some reason I get a bad request error because my cookies won't work or I don't provide a valid lat or long value
    try {
       // const gpsLat = cookie.get('lat') as number
       // const gpsLong = cookie.get('long') as number
@@ -192,13 +203,16 @@ export const detailLoader = async () => {
          .select()
          .eq('isset', true)
 
-
       if (dataArray?.length == 0 || !dataArray) {
          return null
       }
-      const isSetData = dataArray[0] as {lat: number; long: number; isgps: boolean}
+      const isSetData = dataArray[0] as {
+         lat: number
+         long: number
+         isgps: boolean
+      }
 
-      const isGps = isSetData.isgps 
+      const isGps = isSetData.isgps
       const lat = isSetData.lat
       const long = isSetData.long
 
@@ -231,7 +245,7 @@ export const detailLoader = async () => {
          const returnData = {
             ...weatherData,
             ...geoObj,
-            isGps
+            isGps,
          }
 
          return defer({ deferredData: returnData })
@@ -249,16 +263,173 @@ export const detailLoader = async () => {
    return true
 }
 
-export const settingsLoader = async() => {
+export const settingsLoader = async () => {
    try {
       const { data: userData } = await supabase.auth.getUser()
       const email = userData?.user?.email
       const username = userData.user?.user_metadata.username as string
       const avatar = userData.user?.user_metadata.avatar as string
       const userId = userData.user?.id
-      return {deferredData: {username, avatar, email, userId}}
+      return defer({ deferredData: { username, avatar, email, userId } })
    } catch (err) {
       console.log(err)
       throw err
+   }
+}
+
+
+
+async function updateGpsEntry (user_id: string) {
+
+   try {
+      const gpsPermission = await navigator.permissions.query({
+         name: 'geolocation',
+      })
+      const permissionState = gpsPermission.state
+      if (permissionState === 'granted') {
+         const { data: user } = await supabase.auth.getUser()
+         console.log(user)
+         const gpsLat = cookie.get('panda-cookie-lat') as number
+         const gpsLong = cookie.get('panda-cookie-long') as number
+         const { data: gpsUpdateData, error: gpsUpdateError } = await supabase
+            .from('weather_data')
+            .update([
+               {
+                  lat: gpsLat,
+                  long: gpsLong,
+                  user_id,
+                  isgps: true,
+                  updated_at: new Date(),
+               },
+            ])
+            .match({ isgps: true, user_id })
+            .select()
+         if (gpsUpdateError) {
+            console.log(gpsUpdateError)
+         }
+         if (gpsUpdateData!.length === 0) {
+            const { data: insertGpsData, error: insertError } = await supabase
+               .from('weather_data')
+               .insert([
+                  {
+                     lat: gpsLat,
+                     long: gpsLong,
+                     user_id,
+                     isgps: true,
+                  },
+               ])
+               .select()
+            if (insertError) {
+               console.log(insertError)
+            }
+            console.log(insertGpsData)
+         }
+      } else {
+         console.log('error')
+         const { error: deleteError } = await supabase
+            .from('weather_data')
+            .delete()
+            .eq('isgps', true)
+         if (deleteError) {
+            console.log(deleteError)
+         }
+      }
+      
+   } catch (error) {
+      console.log(error)  
+   }
+}
+
+export interface ReturnDataType {
+   state: string
+   country: string
+   name: string
+   lat: number
+   long: number
+   isGps: boolean
+   isSet: boolean
+   description: string
+   icon: string
+   temp: number
+   id: string
+}
+export type CurrentWeatherDataType = {
+   main: {temp: number}
+   weather: [
+      {
+         icon: string
+         main: string
+      }
+   ]
+}
+
+export const locationLoader = async () => {
+   const url = 'https://api.openweathermap.org/data/2.5/weather'
+
+
+
+   let returnData: ReturnDataType[] = []
+   try {
+      const { data: userData } = await supabase.auth.getUser()
+      userData.user ? await updateGpsEntry(userData.user.id) : null
+      const { data, error } = await supabase
+         .from('weather_data')
+         .select('*')
+         .eq('user_id', userData.user?.id)
+      if (error) {
+         throw error
+      }
+      console.log(data)
+      await Promise.all(
+         data.map(
+            async (el: {
+               lat: number
+               long: number
+               isgps: boolean
+               isset: boolean
+               id: string
+            }) => {
+               const res = await axios<GeoDataType[]>(GEO_URL, {
+                  params: {
+                     lat: el.lat,
+                     lon: el.long,
+                     appid: OPEN_WEATHER_API_KEY,
+                     
+                  },
+               })
+               const res2 = await axios<CurrentWeatherDataType>(url, {
+                  params: {
+                     lat: el.lat,
+                     lon: el.long,
+                     appid: OPEN_WEATHER_API_KEY,
+                     units: 'metric',
+                  },
+               })
+               if (res.status === 200 && res2.status === 200) {
+                  const { data: geoData } = res
+                  const { data: weatherData } = res2
+                  console.log(weatherData)
+                  const dataObj = {
+                     state: geoData[0].state,
+                     country: geoData[0].country,
+                     name: geoData[0].name,
+                     lat: el.lat,
+                     long: el.long,
+                     isGps: el.isgps,
+                     isSet: el.isset,
+                     temp: weatherData.main.temp,
+                     icon: weatherData.weather[0].icon,
+                     description: weatherData.weather[0].main,
+                     id: el.id
+                  }
+                  returnData = [...returnData, dataObj]
+               }
+            }
+         )
+      )
+      return defer({ deferredData: returnData })
+   } catch (error) {
+      console.log(error)
+      throw error
    }
 }

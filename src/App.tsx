@@ -12,7 +12,6 @@ import Loading from './components/Loading'
 import { PiWindDuotone } from 'react-icons/pi'
 import { rainingIntensity } from './utils/utils'
 
-
 export interface WeatherDataInterface {
    dt: number
    humidity: number
@@ -31,18 +30,18 @@ export interface WeatherDataInterface {
 }
 
 export interface HourlyWeatherDataInterface extends WeatherDataInterface {
-   feels_like: number,
+   feels_like: number
    temp: number
    pop: number
    rain?: {
-      "1h": number
+      '1h': number
    }
 }
 export interface CurrentWeatherDataInterface extends WeatherDataInterface {
-   feels_like: number,
-   temp: number,
+   feels_like: number
+   temp: number
    rain?: {
-      "1h": number
+      '1h': number
    }
 }
 
@@ -81,7 +80,7 @@ const App = () => {
             clouds,
             wind_speed,
             rain,
-            
+
             weather: [{ description, icon, main }],
          },
       } = deferredData
@@ -160,9 +159,15 @@ const App = () => {
                      </div>
                      {'rain' in deferredData.current ? (
                         <div className='bg-slate-800 rounded-lg border-4 border-slate-900 backdrop-blur-sm p-4 text-white/80 text-sm text-center'>
-                           <h3 className="text-2xl underline underline-offset-8">Raining Zone</h3>
-                           <h4 className="font-serif italic mt-5 mb-3">{rainingIntensity(rain!['1h'])}</h4>
-                           <p className="">{`${rain!['1h'].toString()} mm/h`}</p>
+                           <h3 className='text-2xl underline underline-offset-8'>
+                              Raining Zone
+                           </h3>
+                           <h4 className='font-serif italic mt-5 mb-3'>
+                              {rainingIntensity(rain!['1h'])}
+                           </h4>
+                           <p className=''>{`${rain![
+                              '1h'
+                           ].toString()} mm/h`}</p>
                         </div>
                      ) : null}
                   </div>
@@ -173,32 +178,26 @@ const App = () => {
    }
    if (!loaderData) {
       return (
-         
-               <section className='p-20 min-h-[80dvh] w-[clamp(25rem,70vw,80rem)] rounded-lg bg-slate-50/10 backdrop-blur-sm relative after:absolute after:inset-[0.5rem] after:border-slate-700/50 after:border-2 after:rounded-lg flex flex-col after:z-[-1]'>
-                  <h1 className='text-center text-3xl text-slate-800'>
-                     Weather App
-                  </h1>
-                  <Underline />
-                  <Clock />
-                  <article className='bg-[rgba(255,255,255,0.6)] text-zinc-900 rounded-md min-h-[10rem] p-8 backdrop-blur-xl'>
-                     <h2 className='text-2xl text-center'>
-                        Weather the weather
-                     </h2>
-                     <div className='my-5 flex flex-col items-center justify-center relative'>
-                        Nothing here yet...
-                     </div>
-                     <Link
-                        className='text-md font-thin flex justify-center text-cyan-800 underline hover:text-cyan-600 focus-visible:text-cyan-600 transition-colors'
-                        to='/locations'
-                     >
-                        <span className='text-center'>
-                           Go to <b>Administer-Location-Page</b> to add a
-                           location or turn on <b>Position</b> on your Browser.
-                        </span>
-                     </Link>
-                  </article>
-               </section>
-         
+         <section className='p-20 min-h-[80dvh] w-[clamp(25rem,70vw,80rem)] rounded-lg bg-slate-50/10 backdrop-blur-sm relative after:absolute after:inset-[0.5rem] after:border-slate-700/50 after:border-2 after:rounded-lg flex flex-col after:z-[-1]'>
+            <h1 className='text-center text-3xl text-slate-800'>Weather App</h1>
+            <Underline />
+            <Clock />
+            <article className='bg-[rgba(255,255,255,0.6)] text-zinc-900 rounded-md min-h-[10rem] p-8 backdrop-blur-xl'>
+               <h2 className='text-2xl text-center'>Weather the weather</h2>
+               <div className='my-5 flex flex-col items-center justify-center relative'>
+                  Nothing here yet...
+               </div>
+               <Link
+                  className='text-md font-thin flex justify-center text-cyan-800 underline hover:text-cyan-600 focus-visible:text-cyan-600 transition-colors'
+                  to='/locations'
+               >
+                  <span className='text-center'>
+                     Go to <b>Administer-Location-Page</b> to add a location or
+                     turn on <b>Position</b> on your Browser.
+                  </span>
+               </Link>
+            </article>
+         </section>
       )
    }
 

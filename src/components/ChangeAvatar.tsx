@@ -20,6 +20,7 @@ const ChangeAvatar = () => {
    const updateAvatar = async (croppedData: File) => {
       try {
          if (!db?.avatar?.includes('placeholder')) {
+            console.log(db!.avatar)
             await supabase.storage
                .from('avatars')
                .remove([db!.avatar!.split('avatars/')[1]])
@@ -94,7 +95,7 @@ const ChangeAvatar = () => {
                      <Cropper
                         src={uploaded!}
                         // style={{ height: 500, width: 500 }}
-                        className="w-[80vw] mx-auto"
+                        className="w-[80vw] mx-auto max-w-[50rem]"
                         autoCropArea={1}
                         aspectRatio={1}
                         viewMode={3}
@@ -102,10 +103,10 @@ const ChangeAvatar = () => {
                         ref={cropperRef}
                      />
                         <div className="flex justify-center gap-4">
-                           <button className="bg-teal-600 px-2 py-1 rounded-sm" onClick={(e: React.MouseEvent) => void handleCrop(e)}>
+                           <button className="bg-slate-700 px-2 hover:bg-slate-900 text-white py-1 rounded-sm" onClick={(e: React.MouseEvent) => void handleCrop(e)}>
                               Crop
                            </button>
-                           <button className="bg-red-800 px-2 py-1 rounded-sm" onClick={(e: React.MouseEvent) => {
+                           <button className="bg-red-700 px-2 hover:bg-red-900 text-white py-1 rounded-sm" onClick={(e: React.MouseEvent) => {
                               e.preventDefault()
                               setUploaded(null)
                               dialogRef.current!.close()

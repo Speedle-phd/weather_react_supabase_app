@@ -8,7 +8,7 @@ import RootLayout from './layout/RootLayout'
 import AuthLayout from './layout/AuthLayout'
 import Login from './pages/Login'
 import DatabaseContextProvider from './context/DataBaseContextProvider'
-import { appLoader, detailLoader, isLoggedIn, isNotLoggedIn, settingsLoader } from './api/loader'
+import { appLoader, detailLoader, isLoggedIn, isNotLoggedIn, locationLoader, settingsLoader } from './api/loader'
 import ErrorHandler from './components/ErrorHandler'
 import WeatherDetails from './pages/WeatherDetails'
 import Locations from './pages/Locations'
@@ -38,7 +38,7 @@ const router = createBrowserRouter([
          {
             path: 'locations',
             element: <Locations />,
-            // loader: detailLoader,
+            loader: locationLoader,
             errorElement: <ErrorHandler />,
          },
          {
@@ -56,22 +56,18 @@ const router = createBrowserRouter([
          {
             path: '/signup',
             element: <Login />,
-            // loader: isNotLoggedIn,
          },
          {
             path: '/login',
             element: <Login />,
-            // loader: isNotLoggedIn,
          },
          {
             path: '/reset',
             element: <Reset />,
-            // loader: isNotLoggedIn,
          },
          {
             path: '/restoring_password',
             element: <Restoring />,
-            // loader: isNotLoggedIn,
          },
       ],
    },

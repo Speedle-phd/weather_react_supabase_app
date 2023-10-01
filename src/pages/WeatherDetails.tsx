@@ -2,22 +2,10 @@ import { Await, Link, useLoaderData } from 'react-router-dom'
 import { HourlyWeatherDataInterface, WeatherDataInterface } from '../App'
 import { Suspense, useEffect, useRef } from 'react'
 import Loading from '../components/Loading'
-// Step 2 - Include the react-fusioncharts component
-import ReactFC from 'react-fusioncharts'
-// Step 3 - Include the fusioncharts library
-import FusionCharts from 'fusioncharts'
-// Step 4 - Include the chart type
-import Line from 'fusioncharts/fusioncharts.charts'
-// Step 5 - Include the theme as fusion
-import FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion'
 import Underline from '../components/Underline'
 import WeatherIconValuePair from '../components/WeatherIconValuePair'
 import DayWeather from '../components/DayWeather'
 import { ImLocation } from 'react-icons/im'
-// Step 6 - Adding the chart and theme as dependency to the core fusioncharts
-ReactFC.fcRoot(FusionCharts, Line, FusionTheme)
-
-// Create a JSON object to store the chart configurations
 
 interface DailyWeatherDataInterface extends WeatherDataInterface {
    temp: {
@@ -58,20 +46,6 @@ const WeatherDetails = () => {
    const loaderData = useLoaderData()
    const hourTempRef = useRef<HTMLDivElement>(null)
 
-   // const handleMouseDown = (e: MouseEvent) => {
-   //    const element = hourTempRef.current!
-   //    const parent = element.parentElement!
-   //    const x = e.clientX
-   //    const posX = parent.scrollLeft
-   //    element.onmousemove = (e: MouseEvent) => {
-   //       const newX = e.clientX
-   //       const dx = newX - x
-   //       parent.scrollLeft = posX - dx
-   //       window.onmouseup = () => {
-   //          element.onmousemove = null
-   //       }
-   //    }
-   // }
    const handlePointer = (e: PointerEvent) => {
       const element = hourTempRef.current!
       const parent = element.parentElement!
@@ -92,15 +66,14 @@ const WeatherDetails = () => {
 
    useEffect(() => {
       const hourlyContainer = hourTempRef.current!
-      // hourlyContainer.addEventListener('mousedown', handleMouseDown)
-      hourlyContainer.addEventListener('pointerdown', handlePointer)
+      hourlyContainer?.addEventListener('pointerdown', handlePointer)
       return () => {
-         // hourlyContainer.removeEventListener('mousedown', handleMouseDown)
-         hourlyContainer.removeEventListener('pointerdown', handlePointer)
+         hourlyContainer?.removeEventListener('pointerdown', handlePointer)
       }
    }, [hourTempRef])
 
-   const renderContent = ({ deferredData }: DetailsDataInterface) => {
+   const renderContent = (loaderData: DetailsDataInterface) => {
+      const {deferredData} = loaderData
       console.log(deferredData)
       const hourlyTempArray: {
          date: string
@@ -173,32 +146,9 @@ const WeatherDetails = () => {
          dailyWeatherArray.push({date, sunrise, sunset, pop, tempMax, tempMin, icon, description, summary, humidity, windSpeed, rain})
       }
       const splicedDailyWeatherArray = dailyWeatherArray.splice(1, dailyWeatherArray.length)
-      // const hourlyTempConfigs = {
-      //    type: 'line', // The chart type
-      //    width: '100%', // Width of the chart
-      //    height: '400', // Height of the chart
-      //    dataFormat: 'json', // Data type
-      //    dataSource: {
-      //       // Chart Configuration
-      //       chart: {
-      //          showBorder: '1',
-      //          borderColor: '#666666',
-      //          borderThickness: '4',
-
-      //          // bgColor: "transparent",
-
-      //          caption: 'Temperature in the next 24 hours', //Set the chart caption
-      //       subCaption: 'In °C - Celsius', //Set the chart subcaption
-      //          xAxisName: 'Hour', //Set the x-axis name
-      //          yAxisName: 'Temperature', //Set the y-axis name
-      //          numberSuffix: '°C',
-      //          theme: 'fusion', //Set the theme for your chart
-      //       },
-      //       // Chart Data - from step 2
-      //       data: hourlyTempArray.slice(0, 24),
-      //    },
-      // }
       const todayData = deferredData.daily[0]
+
+
 
       return (
          <section className='p-10 w-[clamp(25rem,70vw,80rem)] rounded-lg bg-slate-50/10 backdrop-blur-sm relative after:absolute after:inset-[0.5rem] after:border-slate-700/50 after:border-2 after:rounded-lg flex flex-col after:z-[-10]'>
@@ -309,14 +259,25 @@ const WeatherDetails = () => {
                   Nothing here yet...
                </div>
                <Link
-                  className='text-md font-thin flex justify-center text-cyan-800 underline hover:text-cyan-600 focus-visible:text-cyan-600 transition-colors'
+                  className='text-md my-4 flex font-normal justify-center text-cyan-800 underline hover:text-cyan-600 focus-visible:text-cyan-600 transition-colors'
                   to='/locations'
                >
                   <span className='text-center'>
-                     Go to <b>Administer-Location-Page</b> to add a location or
-                     turn on <b>Position</b> on your Browser.
+                     Go to{' '}
+                     <b className='font-extrabold'>Administer-Location-Page</b>{' '}
+                     to add a location or turn on{' '}
+                     <b className='font-extrabold'>Position</b> on your Browser.{' '}
+                     <br />
                   </span>
                </Link>
+               <p className='text-sm text-center font-bold'>
+                  Once you turned on geolocation it will preset your current
+                  position as your favorite location when you are visiting the
+                  "Home" page in case you haven't already picked one.
+               </p>
+               <p className='text-sm text-center font-bold'>
+                  Note: If you are activating geolocation after initially declining, try to logout and login again.
+               </p>
             </article>
          </section>
       )

@@ -16,7 +16,7 @@ const RootLayout = () => {
    const [windowSize, setSize] = useResize()
    const [time] = useTime(new Date())
    const [backgroundImage, setBackgroundImage] = useState<string>()
-
+   
    useEffect(() => {
       if (+time < 13) {
          setBackgroundImage(darkClouds)
