@@ -63,7 +63,7 @@ const App = () => {
    const loaderData = useLoaderData() as AppDataInterface
 
    const renderContent = ({ deferredData }: AppDataInterface) => {
-      console.log(deferredData)
+
       const {
          isGps,
          name,

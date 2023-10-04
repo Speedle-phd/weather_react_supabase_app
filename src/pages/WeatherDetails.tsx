@@ -74,7 +74,6 @@ const WeatherDetails = () => {
 
    const renderContent = (loaderData: DetailsDataInterface) => {
       const {deferredData} = loaderData
-      console.log(deferredData)
       const hourlyTempArray: {
          date: string
          temp: number

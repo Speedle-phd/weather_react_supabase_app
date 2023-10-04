@@ -76,17 +76,17 @@ const Locations = () => {
    ) {
       const LIMES = 0.5
       const { lat: elLat, long: elLong } = el
-      console.log(elLat - LIMES, lat, elLat + LIMES)
+      
       if (
          elLat - LIMES < lat &&
          elLat + LIMES > lat &&
          elLong - LIMES < long &&
          elLong + LIMES > long
       ) {
-         console.log(true)
+
          return true
       }
-      console.log(false)
+
       return false
    }
    // useActionData()
@@ -100,7 +100,7 @@ const Locations = () => {
          setError({
             msg: 'Please select a city, so longitude and latitude values are provided',
          })
-         return console.log('Invalid values')
+         return false
       }
       try {
          let stopFunction = false
@@ -117,7 +117,6 @@ const Locations = () => {
          })
 
          if (stopFunction) return
-         console.log('why?')
          const { data: userData } = await supabase.auth.getUser()
          const {data, error} : {data: unknown[] | null, error: PostgrestError | null} = ( await supabase
             .from('weather_data')
@@ -234,7 +233,6 @@ const Locations = () => {
             },
          })
          if (res.status === 200 && res.data) {
-            console.log(res.data)
             setQueryResults(res.data as GeolocationDataType[])
          }
       } catch (error) {
@@ -252,7 +250,6 @@ const Locations = () => {
    function handleChange() {
       setQueryResults(null)
       const city = cityRef.current?.value
-      console.log(city)
       if (!city) return setQueryResults(null)
       setQuery(city)
    }
@@ -269,14 +266,8 @@ const Locations = () => {
       return () => clearTimeout(myTimeout)
    }, [error])
 
-   useEffect(() => {
-      console.log(queryResults)
-      console.log(favoritePlace)
-      console.log(allData)
-   }, [favoritePlace, allData, queryResults])
-
-   const renderHtml = ({ deferredData }: LoaderInterface) => {
-      console.log(deferredData)
+   // const renderHtml = ({ deferredData }: LoaderInterface) => {
+   const renderHtml = () => {
       return (
          <section className=' py-10 px-10 md:px-20 lg:px-32 w-[clamp(25rem,70vw,80rem)] rounded-lg bg-slate-50/10 backdrop-blur-sm relative after:absolute after:inset-[0.5rem] after:border-slate-700/50 after:border-2 after:rounded-lg flex flex-col after:z-[-2]'>
             {error ? (
@@ -314,7 +305,7 @@ const Locations = () => {
                               <aside className='absolute top-6 w-full left-0 z-100 bg-white border-4 border-stone-800'>
                                  {queryResults.map((el, index) => {
                                     const isOdd = index % 2 == 0
-                                    console.log(isOdd)
+                                 
                                     const { country, lat, lon, name, state } =
                                        el
                                     return (

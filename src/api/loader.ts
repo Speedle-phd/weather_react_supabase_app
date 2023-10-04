@@ -99,7 +99,6 @@ export const appLoader = async () => {
             if (insertError) {
                console.log(insertError)
             }
-            console.log(insertGpsData)
             if (insertGpsData) {
                gpsActivated = true
             }
@@ -107,7 +106,6 @@ export const appLoader = async () => {
             gpsActivated = true
          }
       } else {
-         console.log('error')
          const { error: deleteError } = await supabase
             .from('weather_data')
             .delete()
@@ -128,14 +126,12 @@ export const appLoader = async () => {
       const isGps = isSetData ? isSetData?.isgps : true
       const lat = isSetData ? isSetData.lat : gpsLat
       const long = isSetData ? isSetData.long : gpsLong
-
-      console.log(getIsSetData)
       if (!gpsActivated && getIsSetData!.length === 0) {
          return null
       }
 
       if (!isSetData) {
-         const { data: isSetUpdateData, error: isSetUpdateError } =
+         // const { data: isSetUpdateData, error: isSetUpdateError } =
             await supabase
                .from('weather_data')
                .update([
@@ -179,7 +175,6 @@ export const appLoader = async () => {
             avatar,
             isGps,
          }
-         console.log(returnData)
          return defer({ deferredData: returnData })
       }
    } catch (error) {
@@ -287,8 +282,7 @@ async function updateGpsEntry (user_id: string) {
       })
       const permissionState = gpsPermission.state
       if (permissionState === 'granted') {
-         const { data: user } = await supabase.auth.getUser()
-         console.log(user)
+         // const { data: user } = await supabase.auth.getUser()
          const gpsLat = cookie.get('panda-cookie-lat') as number
          const gpsLong = cookie.get('panda-cookie-long') as number
          const { data: gpsUpdateData, error: gpsUpdateError } = await supabase
@@ -308,7 +302,7 @@ async function updateGpsEntry (user_id: string) {
             console.log(gpsUpdateError)
          }
          if (gpsUpdateData!.length === 0) {
-            const { data: insertGpsData, error: insertError } = await supabase
+            const { error: insertError } = await supabase
                .from('weather_data')
                .insert([
                   {
@@ -322,10 +316,9 @@ async function updateGpsEntry (user_id: string) {
             if (insertError) {
                console.log(insertError)
             }
-            console.log(insertGpsData)
+
          }
       } else {
-         console.log('error')
          const { error: deleteError } = await supabase
             .from('weather_data')
             .delete()
@@ -379,7 +372,6 @@ export const locationLoader = async () => {
       if (error) {
          throw error
       }
-      console.log(data)
       await Promise.all(
          data.map(
             async (el: {
@@ -408,7 +400,6 @@ export const locationLoader = async () => {
                if (res.status === 200 && res2.status === 200) {
                   const { data: geoData } = res
                   const { data: weatherData } = res2
-                  console.log(weatherData)
                   const dataObj = {
                      state: geoData[0].state,
                      country: geoData[0].country,

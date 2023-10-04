@@ -138,7 +138,6 @@ const DatabaseContextProvider = ({ children }: React.PropsWithChildren) => {
    }
 
    supabase.auth.onAuthStateChange((e, s) => {
-      console.log(e)
       switch (e) {
          case 'INITIAL_SESSION':
             if (s && mount) {

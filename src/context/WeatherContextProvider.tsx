@@ -56,9 +56,10 @@ const WeatherContextProvider = ({ children }: React.PropsWithChildren) => {
       } else {
          if (permission.state === 'granted'){
             allowPermission()
-         } else if (permission.state === 'denied') {
-            console.log(permission.state)
-         }
+         } 
+         // else if (permission.state === 'denied') {
+         //    console.log(permission.state)
+         // }
          setLocationModal(false)
       }
    },[allowPermission])

@@ -20,8 +20,8 @@ interface settingsLoaderInterface {
 const Settings = () => {
    const loaderData = useLoaderData()
 
-   const renderHTML = ({deferredData: {username, avatar, email, userId}} : settingsLoaderInterface) => {
-      console.log(loaderData, username, avatar)
+   const renderHTML = ({deferredData: { email, userId}} : settingsLoaderInterface) => {
+      
       return (
          <section className='p-10 w-[clamp(25rem,70vw,80rem)] rounded-lg bg-slate-50/10 backdrop-blur-sm relative after:absolute after:inset-[0.5rem] after:border-slate-700/50 after:border-2 after:rounded-lg flex flex-col after:z-[-10]'>
             <h2 className='text-center text-3xl text-slate-800'>

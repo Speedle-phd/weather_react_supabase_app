@@ -20,7 +20,6 @@ const ChangeAvatar = () => {
    const updateAvatar = async (croppedData: File) => {
       try {
          if (!db?.avatar?.includes('placeholder')) {
-            console.log(db!.avatar)
             await supabase.storage
                .from('avatars')
                .remove([db!.avatar!.split('avatars/')[1]])
@@ -151,25 +150,4 @@ const ChangeAvatar = () => {
 
 export default ChangeAvatar
 
-{
-   /* <dialog
-               ref={dialogRef}
-               className='backdrop:bg-black/60 bg-stone-100 rounded-sm p-0 overflow-hidden'
-            >
-               <div className='p-2 md:p-10 bg-black/80 '>
-                  <SetPositionAvatar preview={preview!} />
-                  <div className='mt-5 flex items-align justify-around'>
-                     <button className='px-3 py-2 rounded-lg text-white bg-teal-900 hover:bg-teal-700 focus-visible:bg-teal-700 transition-colors'>
-                        Accept Position
-                     </button>
-                     <button
-                        onClick={closeModal}
-                        className='px-3 py-2 rounded-lg text-white bg-rose-900 hover:bg-rose-700 focus-visible:bg-rose-700 transition-colors'
-                     >
-                        Use default
-                     </button>
-                  </div>
-               </div>
-            </dialog> */
-}
 
