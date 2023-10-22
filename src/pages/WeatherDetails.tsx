@@ -88,7 +88,7 @@ const WeatherDetails = () => {
          const temp = hour.temp
          const icon = hour.weather[0].icon
          let rain: string
-         const pop = `${(hour.pop * 100).toFixed()} %`
+         const pop = `${(hour.pop * 100)} %`
          if (hour.rain) {
             rain = `${hour.rain["1h"]} mm`
          } else {
@@ -128,7 +128,7 @@ const WeatherDetails = () => {
          const sunset = new Date(
             day.sunset * 1000 + deferredData.timezone_offset
          ).toLocaleTimeString()
-         const pop = `${day.pop.toFixed()} %`
+         const pop = `${day.pop} %`
          const tempMax = `${day.temp.max} °C`
          const tempMin = `${day.temp.min} °C`
          const icon = day.weather[0].icon
