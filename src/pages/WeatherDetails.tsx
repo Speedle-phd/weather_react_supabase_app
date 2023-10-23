@@ -128,7 +128,7 @@ const WeatherDetails = () => {
          const sunset = new Date(
             day.sunset * 1000 + deferredData.timezone_offset
          ).toLocaleTimeString()
-         const pop = `${day.pop} %`
+         const pop = `${day.pop*100}%`
          const tempMax = `${day.temp.max} °C`
          const tempMin = `${day.temp.min} °C`
          const icon = day.weather[0].icon
