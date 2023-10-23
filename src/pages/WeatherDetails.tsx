@@ -45,7 +45,7 @@ interface DetailsDataInterface {
 const WeatherDetails = () => {
    const loaderData = useLoaderData()
    const hourTempRef = useRef<HTMLDivElement>(null)
-
+   console.log(loaderData)
    const handlePointer = (e: PointerEvent) => {
       const element = hourTempRef.current!
       const parent = element.parentElement!
@@ -129,6 +129,7 @@ const WeatherDetails = () => {
             day.sunset * 1000 + deferredData.timezone_offset
          ).toLocaleTimeString()
          const pop = `${day.pop*100}%`
+         console.log(pop)
          const tempMax = `${day.temp.max} °C`
          const tempMin = `${day.temp.min} °C`
          const icon = day.weather[0].icon
